@@ -1,7 +1,6 @@
 package apoy2k.patchworker
 
 import apoy2k.patchworker.game.*
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -9,7 +8,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class PlacementTest {
 
@@ -25,15 +23,15 @@ class PlacementTest {
         assertFailsWith(InvalidPlacementException::class) {
             place(
                 createPatchFields(
-                    -2, 0, 0, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2
+                    O, X, X, null,
+                    O, O, O, null,
+                    O, O, O
                 ),
                 createPatchFields(
-                    2, -1,
-                    2,
+                    X, null,
+                    X,
                 ),
-                Position(0, 1)
+                Position(2, 1)
             )
         }
     }
@@ -43,15 +41,15 @@ class PlacementTest {
         assertFailsWith(InvalidPlacementException::class) {
             place(
                 createPatchFields(
-                    -2, 0, 0, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2
+                    O, X, X, null,
+                    O, O, O, null,
+                    O, O, O
                 ),
                 createPatchFields(
-                    2, -1,
-                    2,
+                    X, null,
+                    X,
                 ),
-                Position(0, 3)
+                Position(2, 3)
             )
         }
     }
@@ -61,14 +59,14 @@ class PlacementTest {
         assertFailsWith(InvalidPlacementException::class) {
             place(
                 createPatchFields(
-                    -2, 0, 0, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2
+                    O, X, X, null,
+                    O, O, O, null,
+                    O, O, O
                 ),
                 createPatchFields(
-                    2, 2, 2, 2
+                    X, X, X, X
                 ),
-                Position(0, 1)
+                Position(2, 1)
             )
         }
     }
@@ -79,41 +77,41 @@ class PlacementTest {
         private fun applyPatchData() = Stream.of(
             Arguments.of(
                 createPatchFields(
-                    -2, -2, -2, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2
+                    O, O, O, null,
+                    O, O, O, null,
+                    O, O, O, null,
+                    O, O, O
                 ),
                 createPatchFields(
-                    2, 2, -1,
-                    2, 0
+                    X, X, null,
+                    X, O
                 ),
                 Position(0, 0),
                 createPatchFields(
-                    0, 0, -2, -1,
-                    0, -2, -2, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2
+                    X, X, O, null,
+                    X, O, O, null,
+                    O, O, O, null,
+                    O, O, O
                 )
             ),
             Arguments.of(
                 createPatchFields(
-                    -2, -2, -2, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2, -1,
-                    -2, -2, -2
+                    O, O, O, null,
+                    O, O, O, null,
+                    O, O, O, null,
+                    O, O, O
                 ),
                 createPatchFields(
-                    2, 2, 3, -1,
-                    2, 2, 0, -1,
-                    0, 3, 0
+                    X, X, X, null,
+                    X, X, O, null,
+                    O, X, O
                 ),
                 Position(1, 0),
                 createPatchFields(
-                    -2, -2, -2, -1,
-                    0, 0, 1, -1,
-                    0, 0, -2, -1,
-                    -2, 1, -2
+                    O, O, O, null,
+                    X, X, X, null,
+                    X, X, O, null,
+                    O, X, O
                 )
             )
         )

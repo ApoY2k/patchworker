@@ -16,5 +16,3 @@ fun calculateIncome(startPosition: Int, steps: Int): Pair<Int, Int> {
         .count { it > startPosition && it <= startPosition + steps }
     return Pair(buttonMultiplier, specialTiles)
 }
-
-fun getButtonMultiplier(position: Int) = buttonIncomeAtIndex.count { it > position }

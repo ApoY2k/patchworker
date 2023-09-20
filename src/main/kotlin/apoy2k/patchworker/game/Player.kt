@@ -7,6 +7,9 @@ class Player {
     var trackerPosition = 0
         private set
 
+    var buttonMultiplier = 0
+        private set
+
     var buttons = 5
         private set
 
@@ -19,15 +22,13 @@ class Player {
         }
 
         buttons -= patch.buttonCost
+        buttonMultiplier += patch.buttonIncome
         board = place(board, patch.fields, anchor)
 
         val income = calculateIncome(trackerPosition, patch.timeCost)
-        val buttonsOnBoard = board
-            .flatten()
-            .count { it == 1 }
 
         trackerPosition += patch.timeCost
-        buttons += buttonsOnBoard * income.first
+        buttons += buttonMultiplier * income.first
         specialTiles += income.second
     }
 }

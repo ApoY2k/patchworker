@@ -1,23 +1,11 @@
 package apoy2k.patchworker
 
 import apoy2k.patchworker.game.calculateIncome
-import apoy2k.patchworker.game.getButtonMultiplier
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import kotlin.test.assertEquals
 
 class TrackerTest {
-
-    @ParameterizedTest
-    @CsvSource(
-        "3, 9",
-        "22, 6",
-        "48, 1"
-    )
-    fun `find button multiplier`(advanceSteps: Int, expectedMultiplier: Int) {
-        calculateIncome(0, advanceSteps)
-        assertEquals(expectedMultiplier, getButtonMultiplier(advanceSteps))
-    }
 
     @ParameterizedTest
     @CsvSource(
@@ -38,5 +26,14 @@ class TrackerTest {
     )
     fun `count button incomes for multiple advances`(initialSteps: Int, advanceSteps: Int, expectedIncomes: Int) {
         assertEquals(expectedIncomes, calculateIncome(initialSteps, advanceSteps).first)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "3, 2, 0",
+        "22, 7, 1",
+    )
+    fun `count special tiles incomes`(initialSteps: Int, advanceSteps: Int, expectedIncomes: Int) {
+        assertEquals(expectedIncomes, calculateIncome(initialSteps, advanceSteps).second)
     }
 }

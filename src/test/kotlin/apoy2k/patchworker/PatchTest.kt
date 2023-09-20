@@ -1,6 +1,8 @@
 package apoy2k.patchworker
 
+import apoy2k.patchworker.game.O
 import apoy2k.patchworker.game.Patch
+import apoy2k.patchworker.game.X
 import apoy2k.patchworker.game.createPatchFields
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -12,16 +14,16 @@ class PatchTest {
 
     @ParameterizedTest
     @MethodSource("rotatePatchData")
-    fun `rotate patch`(initialPatch: List<List<Int>>, expectedRotated: List<List<Int>>) {
-        val patch = Patch(0, 0, initialPatch)
+    fun `rotate patch`(initialPatch: List<List<Boolean>>, expectedRotated: List<List<Boolean>>) {
+        val patch = Patch(0, 0, 0, initialPatch)
         patch.rotate()
         assertEquals(expectedRotated, patch.fields)
     }
 
     @ParameterizedTest
     @MethodSource("flipPatchData")
-    fun `flip patch`(initialPatch: List<List<Int>>, expectedFlipped: List<List<Int>>) {
-        val patch = Patch(0, 0, initialPatch)
+    fun `flip patch`(initialPatch: List<List<Boolean>>, expectedFlipped: List<List<Boolean>>) {
+        val patch = Patch(0, 0, 0, initialPatch)
         patch.flip()
         assertEquals(expectedFlipped, patch.fields)
     }
@@ -29,70 +31,70 @@ class PatchTest {
     companion object {
         @JvmStatic
         private fun rotatePatchData() = Stream.of(
-            Arguments.of(createPatchFields(2, 2), createPatchFields(2, -1, 2)),
+            Arguments.of(createPatchFields(X, X), createPatchFields(X, null, X)),
             Arguments.of(
                 createPatchFields(
-                    2, 0, -1,
-                    2, 2
+                    X, O, null,
+                    X, X
                 ), createPatchFields(
-                    2, 2, -1,
-                    2, 0
+                    X, X, null,
+                    X, O
                 )
             ),
             Arguments.of(
                 createPatchFields(
-                    2, 3, 3, -1,
-                    2, 2, 0, -1,
-                    0, 2, 0
+                    X, X, X, null,
+                    X, X, O, null,
+                    O, X, O
                 ), createPatchFields(
-                    0, 2, 2, -1,
-                    2, 2, 3, -1,
-                    0, 0, 3
+                    O, X, X, null,
+                    X, X, X, null,
+                    O, O, X
                 )
             ),
             Arguments.of(
                 createPatchFields(
-                    2, 3, 3, -1,
-                    2, 2, 0,
+                    X, X, X, null,
+                    X, X, O,
                 ), createPatchFields(
-                    2, 2, -1,
-                    2, 3, -1,
-                    0, 3
+                    X, X, null,
+                    X, X, null,
+                    O, X
                 )
             ),
         )
 
         @JvmStatic
         private fun flipPatchData() = Stream.of(
-            Arguments.of(createPatchFields(2, 0), createPatchFields(0, 2)),
-            Arguments.of(createPatchFields(2, 2), createPatchFields(2, 2)),
+            Arguments.of(createPatchFields(X, O), createPatchFields(O, X)),
+            Arguments.of(createPatchFields(X, X), createPatchFields(X, X)),
             Arguments.of(
                 createPatchFields(
-                    2, 0, -1,
-                    2, 2
+                    X, O, null,
+                    X, X
                 ), createPatchFields(
-                    0, 2, -1,
-                    2, 2
+                    O, X, null,
+                    X, X
                 )
             ),
             Arguments.of(
                 createPatchFields(
-                    2, 3, 3, -1,
-                    2, 2, 0, -1,
-                    0, 2, 0
+                    X, X, X, null,
+                    X, X, O, null,
+                    O, X, O
                 ), createPatchFields(
-                    3, 3, 2, -1,
-                    0, 2, 2, -1,
-                    0, 2, 0
+                    X, X, X, null,
+                    O, X, X, null,
+                    O, X, O
                 )
             ),
             Arguments.of(
                 createPatchFields(
-                    2, 3, 3, -1,
-                    2, 2, 0,
+                    X, X, X, null,
+                    X, X, O,
                 ), createPatchFields(
-                    3, 3, 2, -1,
-                    0, 2, 2
+                    X, X, X, null,
+                    O, X, X
                 )
             ),
         )

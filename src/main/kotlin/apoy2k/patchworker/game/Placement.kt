@@ -17,26 +17,22 @@ fun place(board: Fields, patch: Fields, anchor: Position): Fields {
     }
 
     return board.mapIndexed { row, colFields ->
-        colFields.mapIndexed { col, field ->
+        colFields.mapIndexed newField@ { col, field ->
+            // If the current field is not within the range of the patch, just return it as is
             val point = Position(row, col)
             if (!(point.first in applyRowRange && point.second in applyColRange)) {
-                field
-            } else {
-                try {
-                    val newField = field + patch[row - anchor.first][col - anchor.second]
+                return@newField field
+            }
 
-                    // -2 is the default state of an empty board field
-                    // patches without button increase this to 0
-                    // patches with button increase this to 1
-                    // anything above that means the board already has a patch on that position
-                    if (newField > 1) {
-                        throw InvalidPlacementException()
-                    }
+            // If the field is already filled, nothing can be placed on it
+            if (field) {
+                throw InvalidPlacementException()
+            }
 
-                    newField
-                } catch (ex: IndexOutOfBoundsException) {
-                    throw InvalidPlacementException()
-                }
+            try {
+                return@newField patch[row - anchor.first][col - anchor.second]
+            } catch (ex: IndexOutOfBoundsException) {
+                throw InvalidPlacementException()
             }
         }
     }
