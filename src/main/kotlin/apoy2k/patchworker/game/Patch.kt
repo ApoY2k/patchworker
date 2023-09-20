@@ -6,8 +6,8 @@ const val O = false
 const val X = true
 
 data class Patch(
-    val timeCost: Int,
     val buttonCost: Int,
+    val timeCost: Int,
     val buttonIncome: Int,
     var fields: Fields
 ) {
@@ -39,29 +39,3 @@ data class Patch(
         fields = newFields
     }
 }
-
-/**
- * Create a 2d field matrix from a set of input values
- * where null denotes a "line break", to start a start new row
- */
-fun createPatchFields(vararg values: Boolean?): Fields {
-    val result = mutableListOf<List<Boolean>>()
-    val currentRow = mutableListOf<Boolean>()
-
-    values.forEach {
-        if (it == null) {
-            result.add(currentRow.toList())
-            currentRow.clear()
-        } else {
-            currentRow.add(it)
-        }
-    }
-
-    result.add(currentRow)
-
-    return result
-}
-
-val PATCH_2X1 = Patch(2, 1, 0, createPatchFields(
-    X, X
-))

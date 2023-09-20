@@ -1,6 +1,5 @@
-package apoy2k.patchworker
+package apoy2k.patchworker.game
 
-import apoy2k.patchworker.game.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

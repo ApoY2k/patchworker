@@ -1,6 +1,5 @@
-package apoy2k.patchworker
+package apoy2k.patchworker.game
 
-import apoy2k.patchworker.game.calculateIncome
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import kotlin.test.assertEquals

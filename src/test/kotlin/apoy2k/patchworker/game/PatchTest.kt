@@ -1,9 +1,5 @@
-package apoy2k.patchworker
+package apoy2k.patchworker.game
 
-import apoy2k.patchworker.game.O
-import apoy2k.patchworker.game.Patch
-import apoy2k.patchworker.game.X
-import apoy2k.patchworker.game.createPatchFields
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource

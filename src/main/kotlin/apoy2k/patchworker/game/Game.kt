@@ -3,10 +3,7 @@ package apoy2k.patchworker.game
 class Game {
     private val player = Player()
     private val enemy = Player()
-
-    private val patches = mutableListOf(
-        PATCH_2X1
-    ).also { it.shuffle() }
+    private val patches = generatePatchLineup()
 
     fun getPatchOptions() = patches.subList(0, 3)
 

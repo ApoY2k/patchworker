@@ -1,6 +1,5 @@
-package apoy2k.patchworker
+package apoy2k.patchworker.game
 
-import apoy2k.patchworker.game.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -18,7 +17,7 @@ class PlayerTest {
     @Test
     fun `place patch mutate player an calculates incomes`() {
         val player = Player()
-        val patch = Patch(5, 2, 1, createPatchFields(X, X))
+        val patch = Patch(2, 5, 1, createPatchFields(X, X))
         player.place(patch, Position(0, 0))
         assertEquals(5, player.trackerPosition)
 
@@ -31,7 +30,7 @@ class PlayerTest {
     @Test
     fun `score player after placing patch`() {
         val player = Player()
-        val patch = Patch(5, 2, 1, createPatchFields(X, X))
+        val patch = Patch(2, 5, 1, createPatchFields(X, X))
         player.place(patch, Position(0, 0))
 
         // -162 initial
