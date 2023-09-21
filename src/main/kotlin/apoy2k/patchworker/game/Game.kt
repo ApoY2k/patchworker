@@ -1,13 +1,16 @@
 package apoy2k.patchworker.game
 
-class Game {
+class Game(
+    private val patches: MutableList<Patch> = generatePatches()
+) {
     private val player = Player()
     private val enemy = Player()
-    private val patches = generatePatchLineup()
 
-    fun getPatchOptions() = patches.subList(0, 3)
+    fun getPatchOptions() = patches.take(3).toList()
 
-    fun nextPlayer(): Player {
+    fun getRemainingPatches() = patches.size
+
+    fun getNextPlayer(): Player {
         val trackSorted = listOf(player, enemy)
             .sortedBy { it.trackerPosition }
 

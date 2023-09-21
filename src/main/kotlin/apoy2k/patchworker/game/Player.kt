@@ -1,13 +1,12 @@
 package apoy2k.patchworker.game
 
 class Player {
+    private var buttonMultiplier = 0
+
     var board = createBoard()
         private set
 
     var trackerPosition = 0
-        private set
-
-    var buttonMultiplier = 0
         private set
 
     var buttons = 5
