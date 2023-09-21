@@ -55,6 +55,8 @@ fun createPatch_2X3_P() = Patch(
     )
 )
 
+fun createSpecialPatch() = Patch(0, 0, 0, createPatchFields(X))
+
 fun createPatch_3X1_I() = Patch(2, 2, 0, createPatchFields(X, X, X))
 
 fun createPatch_3X2_L() = Patch(

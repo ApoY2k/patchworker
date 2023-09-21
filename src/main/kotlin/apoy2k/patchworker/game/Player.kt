@@ -12,7 +12,7 @@ class Player {
     var buttons = 5
         private set
 
-    var specialTiles = 0
+    var specialPatches = 0
         private set
 
     fun place(patch: Patch, anchor: Position) {
@@ -28,6 +28,6 @@ class Player {
 
         trackerPosition += patch.timeCost
         buttons += buttonMultiplier * income.first
-        specialTiles += income.second
+        specialPatches += income.second
     }
 }

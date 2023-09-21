@@ -6,7 +6,10 @@ class Game(
     private val player = Player()
     private val enemy = Player()
 
-    fun getPatchOptions() = patches.take(3).toList()
+    fun getPatchOptions(player: Player) = when (player.specialPatches > 0) {
+        true -> listOf(createSpecialPatch())
+        else -> patches.take(3).toList()
+    }
 
     fun getRemainingPatches() = patches.size
 
@@ -14,7 +17,7 @@ class Game(
         val trackSorted = listOf(player, enemy)
             .sortedBy { it.trackerPosition }
 
-        val specialTilePlayer = trackSorted.firstOrNull { it.specialTiles > 0 }
+        val specialTilePlayer = trackSorted.firstOrNull { it.specialPatches > 0 }
 
         return when (specialTilePlayer) {
             null -> trackSorted.first()
