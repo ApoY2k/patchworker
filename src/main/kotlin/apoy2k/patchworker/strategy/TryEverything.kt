@@ -11,14 +11,14 @@ class TryEverything : Strategy {
         val patches = game.getPatchOptions(player)
         var wasPlaced = false
 
-        patches.forEach { patch ->
+        for (patch in patches) {
             if (patch.buttonCost > player.buttons) {
-                return@forEach
+                continue
             }
 
             wasPlaced = tryPlaceOnBoard(game, player, patch)
             if (wasPlaced) {
-                return@forEach
+                break
             }
         }
 

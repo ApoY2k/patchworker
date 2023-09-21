@@ -42,9 +42,8 @@ class Game(
             val distance = patches.take(3).indexOf(patch)
             patches.remove(patch)
             Collections.rotate(patches, distance)
+            resetNextPlayer()
         }
-
-        resetNextPlayer()
 
         return wasPlaced
     }
