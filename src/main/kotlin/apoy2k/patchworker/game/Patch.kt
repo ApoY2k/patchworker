@@ -11,6 +11,8 @@ data class Patch(
     val buttonIncome: Int,
     var fields: Fields
 ) {
+    private val name = "Patch($buttonCost|$timeCost|$buttonIncome|${fields.flatten().size})"
+
     fun rotate() {
         val numRows = fields.size
         val numCols = fields[0].size
@@ -38,4 +40,6 @@ data class Patch(
 
         fields = newFields
     }
+
+    override fun toString() = name
 }

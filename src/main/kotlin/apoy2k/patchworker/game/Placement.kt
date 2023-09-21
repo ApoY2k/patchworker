@@ -4,7 +4,7 @@ typealias Position = Pair<Int, Int>
 
 class InvalidPlacementException : Exception()
 
-fun place(board: Fields, patch: Fields, anchor: Position): Fields {
+fun tryPlace(board: Fields, patch: Fields, anchor: Position): Fields {
     val applyRowRange = anchor.first..<anchor.first + patch.size
     val applyColRange = anchor.second..<anchor.second + patch[0].size
 

@@ -13,14 +13,14 @@ class PlacementTest {
     @ParameterizedTest
     @MethodSource("applyPatchData")
     fun `apply patch`(inputBoard: Fields, patch: Fields, anchor: Position, expectedBoard: Fields) {
-        val newBoard = place(inputBoard, patch, anchor)
+        val newBoard = tryPlace(inputBoard, patch, anchor)
         assertEquals(expectedBoard, newBoard)
     }
 
     @Test
     fun `apply patch over filled space`() {
         assertFailsWith(InvalidPlacementException::class) {
-            place(
+            tryPlace(
                 createPatchFields(
                     O, X, X, null,
                     O, O, O, null,
@@ -38,7 +38,7 @@ class PlacementTest {
     @Test
     fun `apply patch outside boundaries`() {
         assertFailsWith(InvalidPlacementException::class) {
-            place(
+            tryPlace(
                 createPatchFields(
                     O, X, X, null,
                     O, O, O, null,
@@ -56,7 +56,7 @@ class PlacementTest {
     @Test
     fun `apply patch that leaks outside boundaries`() {
         assertFailsWith(InvalidPlacementException::class) {
-            place(
+            tryPlace(
                 createPatchFields(
                     O, X, X, null,
                     O, O, O, null,

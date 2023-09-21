@@ -13,7 +13,7 @@ class BoardTest {
 
     @Test
     fun `place patch and check new score`() {
-        val board = place(createBoard(), createPatchFields(X, X), Position(0, 0))
+        val board = tryPlace(createBoard(), createPatchFields(X, X), Position(0, 0))
         assertEquals(-158, scoreBoard(board))
     }
 }

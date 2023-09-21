@@ -11,6 +11,6 @@ fun main() {
         strategy.execute(game)
     }
     println("Game finished. Scores:")
-    println("Player: ${scorePlayer(game.player)}")
-    println("Enemy: ${scorePlayer(game.enemy)}")
+    println("${game.player1}: ${scorePlayer(game.player1)}")
+    println("${game.player2}: ${scorePlayer(game.player2)}")
 }

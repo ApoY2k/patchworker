@@ -1,6 +1,10 @@
 package apoy2k.patchworker.game
 
-class Player {
+import kotlin.math.min
+
+class Player(
+    val name: String = "player"
+) {
     private var buttonMultiplier = 0
 
     var board = createBoard()
@@ -16,8 +20,13 @@ class Player {
         private set
 
     fun advance(steps: Int) {
-        trackerPosition += steps
-        buttons += steps
+        val actualSteps = min(53 - trackerPosition, steps)
+        println("$this advances $actualSteps steps")
+
+        trackerPosition += actualSteps
+        val income = calculateIncome(trackerPosition, actualSteps)
+        buttons += actualSteps + buttonMultiplier * income.first
+        specialPatches += income.second
     }
 
     fun place(patch: Patch, anchor: Position): Boolean {
@@ -26,15 +35,20 @@ class Player {
         }
 
         return try {
+            board = tryPlace(board, patch.fields, anchor)
+            println("$this has placed $patch")
+
             buttons -= patch.buttonCost
             buttonMultiplier += patch.buttonIncome
-            board = place(board, patch.fields, anchor)
 
-            val income = calculateIncome(trackerPosition, patch.timeCost)
-
-            trackerPosition += patch.timeCost
-            buttons += buttonMultiplier * income.first
-            specialPatches += income.second
+            if (patch.timeCost == 0) {
+                specialPatches -= 1
+            } else {
+                val income = calculateIncome(trackerPosition, patch.timeCost)
+                trackerPosition += patch.timeCost
+                buttons += buttonMultiplier * income.first
+                specialPatches += income.second
+            }
 
             true
         } catch (ip: InvalidPlacementException) {
@@ -42,5 +56,5 @@ class Player {
         }
     }
 
-    override fun toString() = "Player@${hashCode()} at position $trackerPosition with $buttons buttons"
+    override fun toString() = "Player($name|$trackerPosition|$buttons)"
 }

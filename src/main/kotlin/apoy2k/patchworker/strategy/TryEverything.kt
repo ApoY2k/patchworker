@@ -8,7 +8,7 @@ import apoy2k.patchworker.game.Position
 class TryEverything : Strategy {
     override fun execute(game: Game) {
         val player = game.nextPlayer ?: throw NullPointerException()
-        val patches = game.getPatchOptions()
+        val patches = game.getPatchOptions(player)
         var wasPlaced = false
 
         patches.forEach { patch ->
@@ -20,18 +20,10 @@ class TryEverything : Strategy {
             if (wasPlaced) {
                 return@forEach
             }
-            patch.flip()
-            wasPlaced = tryPlaceOnBoard(game, player, patch)
-            if (wasPlaced) {
-                return@forEach
-            }
         }
 
         if (!wasPlaced) {
-            println("Advancing Player $player")
             game.advance(player)
-        } else {
-            println("Player $player has placed a patch")
         }
     }
 
@@ -40,15 +32,18 @@ class TryEverything : Strategy {
         player: Player,
         patch: Patch
     ): Boolean {
-        repeat(3) {
-            player.board.forEachIndexed { rowIdx, fields ->
-                fields.forEachIndexed { colIdx, _ ->
-                    val anchor = Position(rowIdx, colIdx)
-                    val wasPlaced = game.place(player, patch, anchor)
-                    if (wasPlaced) {
-                        return true
+        repeat(2) {
+            repeat(3) {
+                player.board.forEachIndexed { rowIdx, fields ->
+                    fields.forEachIndexed { colIdx, _ ->
+                        val anchor = Position(rowIdx, colIdx)
+                        val wasPlaced = game.place(player, patch, anchor)
+                        if (wasPlaced) {
+                            return true
+                        }
                     }
                 }
+                patch.rotate()
             }
             patch.flip()
         }
