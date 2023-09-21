@@ -2,6 +2,7 @@ package apoy2k.patchworker.game
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class PlayerTest {
 
@@ -12,6 +13,15 @@ class PlayerTest {
         player.place(patch, Position(0, 0))
         assertEquals(2, player.trackerPosition)
         assertEquals(3, player.buttons)
+    }
+
+    @Test
+    fun `prevent placing too expensive patches`() {
+        assertFailsWith<InvalidPlacementException> {
+            val player = Player()
+            val patch = Patch(6, 2, 0, createPatchFields(X, X))
+            player.place(patch, Position(0, 0))
+        }
     }
 
     @Test

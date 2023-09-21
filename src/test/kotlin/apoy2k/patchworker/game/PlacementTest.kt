@@ -30,7 +30,7 @@ class PlacementTest {
                     X, null,
                     X,
                 ),
-                Position(2, 1)
+                Position(0, 2)
             )
         }
     }

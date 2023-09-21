@@ -17,11 +17,11 @@ class Game(
         val trackSorted = listOf(player, enemy)
             .sortedBy { it.trackerPosition }
 
-        val specialTilePlayer = trackSorted.firstOrNull { it.specialPatches > 0 }
+        val specialPatchPlayer = trackSorted.firstOrNull { it.specialPatches > 0 }
 
-        return when (specialTilePlayer) {
+        return when (specialPatchPlayer) {
             null -> trackSorted.first()
-            else -> specialTilePlayer
+            else -> specialPatchPlayer
         }
     }
 

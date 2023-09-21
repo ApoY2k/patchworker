@@ -29,11 +29,7 @@ fun place(board: Fields, patch: Fields, anchor: Position): Fields {
                 throw InvalidPlacementException()
             }
 
-            try {
-                return@newField patch[row - anchor.first][col - anchor.second]
-            } catch (ex: IndexOutOfBoundsException) {
-                throw InvalidPlacementException()
-            }
+            return@newField patch[row - anchor.first][col - anchor.second]
         }
     }
 }
