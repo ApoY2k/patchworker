@@ -2,9 +2,8 @@ package apoy2k.patchworker.game
 
 import kotlin.math.min
 
-class Player(
-    val name: String = "player"
-) {
+class Player {
+    private val id = Thread.currentThread().id
     private var buttonMultiplier = 0
 
     var board = createBoard()
@@ -21,7 +20,6 @@ class Player(
 
     fun advance(steps: Int) {
         val actualSteps = min(53 - trackerPosition, steps)
-        println("$this advances $actualSteps steps")
 
         trackerPosition += actualSteps
         val income = calculateIncome(trackerPosition, actualSteps)
@@ -36,7 +34,6 @@ class Player(
 
         return try {
             board = tryPlace(board, patch.fields, anchor)
-            println("$this has placed $patch")
 
             buttons -= patch.buttonCost
             buttonMultiplier += patch.buttonIncome
@@ -56,5 +53,13 @@ class Player(
         }
     }
 
-    override fun toString() = "Player($name|$trackerPosition|$buttons)"
+    fun copy() = Player().also {
+        it.board = board.map { row -> row.toMutableList() }.toMutableList()
+        it.trackerPosition = trackerPosition
+        it.specialPatches = specialPatches
+        it.buttonMultiplier = buttonMultiplier
+        it.buttons = buttons
+    }
+
+    override fun toString() = "Player#$id($trackerPosition|$buttons)"
 }

@@ -3,13 +3,18 @@ package apoy2k.patchworker.game
 import java.util.*
 
 class Game(
-    private val patches: MutableList<Patch> = generatePatches()
+    private val patches: MutableList<Patch> = generatePatches(),
+    val player1: Player = Player(),
+    val player2: Player = Player()
 ) {
-    val player1 = Player("player1")
-    val player2 = Player("player2")
+    private val id = Thread.currentThread().id
 
-    var nextPlayer: Player? = player1
+    var nextPlayer: Player? = null
         private set
+
+    init {
+        resetNextPlayer()
+    }
 
     fun getRemainingPatches() = patches.size
 
@@ -60,4 +65,12 @@ class Game(
             else -> specialPatchPlayer
         }
     }
+
+    fun copy() = Game(
+        patches.map { it.copy() }.toMutableList(),
+        player1.copy(),
+        player2.copy()
+    )
+
+    override fun toString() = "Game#$id"
 }
