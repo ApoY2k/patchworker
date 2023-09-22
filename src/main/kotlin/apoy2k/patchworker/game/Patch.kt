@@ -5,13 +5,16 @@ typealias Fields = List<List<Boolean>>
 const val O = false
 const val X = true
 
-data class Patch(
+class Patch(
     val buttonCost: Int,
     val timeCost: Int,
     val buttonIncome: Int,
-    var fields: Fields
+    fields: Fields
 ) {
     private val name = "Patch($buttonCost|$timeCost|$buttonIncome|${fields.flatten().size})"
+
+    var fields: Fields = fields
+        private set
 
     fun rotate() {
         val numRows = fields.size
@@ -40,6 +43,13 @@ data class Patch(
 
         fields = newFields
     }
+
+    fun copy() = Patch(
+        buttonCost,
+        timeCost,
+        buttonIncome,
+        fields.map { it.toMutableList() }.toMutableList()
+    )
 
     override fun toString() = name
 }

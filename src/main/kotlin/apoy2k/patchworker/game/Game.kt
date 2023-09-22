@@ -5,11 +5,12 @@ import java.util.*
 class Game(
     private val patches: MutableList<Patch> = generatePatches(),
     val player1: Player = Player(),
-    val player2: Player = Player()
+    val player2: Player = Player(),
+    nextPlayer: Player? = null
 ) {
-    private val id = Thread.currentThread().id
+    private val id = hashCode()
 
-    var nextPlayer: Player? = null
+    var nextPlayer: Player? = nextPlayer
         private set
 
     init {
@@ -24,7 +25,7 @@ class Game(
     }
 
     fun advance(player: Player): Boolean {
-        val otherPlayer = listOf(this.player1, player2).first { it != player }
+        val otherPlayer = listOf(player1, player2).first { it != player }
 
         if (player.trackerPosition > otherPlayer.trackerPosition) {
             return false
@@ -69,7 +70,8 @@ class Game(
     fun copy() = Game(
         patches.map { it.copy() }.toMutableList(),
         player1.copy(),
-        player2.copy()
+        player2.copy(),
+        nextPlayer?.copy()
     )
 
     override fun toString() = "Game#$id"

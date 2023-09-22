@@ -4,5 +4,5 @@ import apoy2k.patchworker.game.Game
 
 fun main() {
     val game = Game()
-    recurseGameSteps(game, 0, 5)
+    recurseGameSteps(game, 0, 2)
 }

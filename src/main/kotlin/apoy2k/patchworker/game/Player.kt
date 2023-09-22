@@ -2,20 +2,28 @@ package apoy2k.patchworker.game
 
 import kotlin.math.min
 
-class Player {
-    private val id = Thread.currentThread().id
-    private var buttonMultiplier = 0
+class Player(
+    board: Fields = createBoard(),
+    trackerPosition: Int = 0,
+    buttonMultiplier: Int = 0,
+    buttons: Int = 5,
+    specialPatches: Int = 0,
+) {
+    private val id = hashCode()
 
-    var board = createBoard()
+    var board: Fields = board
         private set
 
-    var trackerPosition = 0
+    var trackerPosition: Int = trackerPosition
         private set
 
-    var buttons = 5
+    var buttonMultiplier: Int = buttonMultiplier
         private set
 
-    var specialPatches = 0
+    var buttons: Int = buttons
+        private set
+
+    var specialPatches: Int = specialPatches
         private set
 
     fun advance(steps: Int) {
@@ -53,13 +61,13 @@ class Player {
         }
     }
 
-    fun copy() = Player().also {
-        it.board = board.map { row -> row.toMutableList() }.toMutableList()
-        it.trackerPosition = trackerPosition
-        it.specialPatches = specialPatches
-        it.buttonMultiplier = buttonMultiplier
-        it.buttons = buttons
-    }
+    fun copy() = Player(
+        board.map { row -> row.toMutableList() }.toMutableList(),
+        trackerPosition,
+        buttonMultiplier,
+        buttons,
+        specialPatches
+    )
 
     override fun toString() = "Player#$id($trackerPosition|$buttons)"
 }
