@@ -8,9 +8,8 @@ class Player(
     buttonMultiplier: Int = 0,
     buttons: Int = 5,
     specialPatches: Int = 0,
+    actionsTaken: Int = 0
 ) {
-    private val id = hashCode()
-
     var board: Fields = board
         private set
 
@@ -26,6 +25,9 @@ class Player(
     var specialPatches: Int = specialPatches
         private set
 
+    var actionsTaken: Int = actionsTaken
+        private set
+
     fun advance(steps: Int) {
         val actualSteps = min(53 - trackerPosition, steps)
 
@@ -33,6 +35,8 @@ class Player(
         val income = calculateIncome(trackerPosition, actualSteps)
         buttons += actualSteps + buttonMultiplier * income.first
         specialPatches += income.second
+
+        actionsTaken++
     }
 
     fun place(patch: Patch, anchor: Position): Boolean {
@@ -55,6 +59,8 @@ class Player(
                 specialPatches += income.second
             }
 
+            actionsTaken++
+
             true
         } catch (ip: InvalidPlacementException) {
             false
@@ -66,8 +72,7 @@ class Player(
         trackerPosition,
         buttonMultiplier,
         buttons,
-        specialPatches
+        specialPatches,
+        actionsTaken
     )
-
-    override fun toString() = "Player#$id($trackerPosition|$buttons)"
 }

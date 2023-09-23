@@ -24,6 +24,8 @@ fun createPatchFields(vararg values: Boolean?): Fields {
     return result
 }
 
+fun createSpecialPatch() = Patch(0, 0, 0, createPatchFields(X))
+
 fun createPatch_2X1_I() = Patch(1, 2, 0, createPatchFields(X, X))
 
 fun createPatch_2X2_L() = Patch(
@@ -54,8 +56,6 @@ fun createPatch_2X3_P() = Patch(
         X, X
     )
 )
-
-fun createSpecialPatch() = Patch(0, 0, 0, createPatchFields(X))
 
 fun createPatch_3X1_I() = Patch(2, 2, 0, createPatchFields(X, X, X))
 

@@ -19,7 +19,7 @@ fun main() {
 
         thread {
             val game = Game()
-            simulateGameStep(results, game, 10)
+            simulateStep(results, game, 10)
             finished = true
         }
     }

@@ -8,8 +8,6 @@ class Game(
     val player2: Player = Player(),
     nextPlayer: Player? = null
 ) {
-    private val id = hashCode()
-
     var nextPlayer: Player? = nextPlayer
         private set
 
@@ -47,7 +45,9 @@ class Game(
         if (wasPlaced) {
             val distance = patches.take(3).indexOf(patch)
             patches.remove(patch)
-            Collections.rotate(patches, distance)
+            if (distance > 0) {
+                Collections.rotate(patches, distance)
+            }
             resetNextPlayer()
         }
 
@@ -73,6 +73,4 @@ class Game(
         player2.copy(),
         nextPlayer?.copy()
     )
-
-    override fun toString() = "Game#$id"
 }

@@ -11,8 +11,6 @@ class Patch(
     val buttonIncome: Int,
     fields: Fields
 ) {
-    private val name = "Patch($buttonCost|$timeCost|$buttonIncome|${fields.flatten().size})"
-
     var fields: Fields = fields
         private set
 
@@ -51,8 +49,6 @@ class Patch(
         fields.map { it.toMutableList() }.toMutableList()
     )
 
-    override fun toString() = name
-
     override fun equals(other: Any?): Boolean {
         if (other !is Patch) {
             return false
@@ -68,7 +64,6 @@ class Patch(
         var result = buttonCost
         result = 31 * result + timeCost
         result = 31 * result + buttonIncome
-        result = 31 * result + name.hashCode()
         result = 31 * result + fields.hashCode()
         return result
     }
