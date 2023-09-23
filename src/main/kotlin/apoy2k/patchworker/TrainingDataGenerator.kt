@@ -3,17 +3,12 @@ package apoy2k.patchworker
 import apoy2k.patchworker.game.Game
 import apoy2k.patchworker.game.Position
 import apoy2k.patchworker.game.scorePlayer
-import kotlin.math.abs
 
-fun recurseGameSteps(game: Game, depth: Int, maxDepth: Int) {
+fun simulateGameStep(scores: MutableSet<Int>, game: Game, maxDepth: Int, depth: Int = 0) {
     val player = game.nextPlayer
 
     if (depth > maxDepth || player == null) {
-        val scorePlayer1 = scorePlayer(game.player1)
-        val scorePlayer2 = scorePlayer(game.player2)
-        val fitnesse = abs(scorePlayer2) - abs(scorePlayer1)
-        print("-".repeat(depth - 1))
-        println(" $game finished. final score: $scorePlayer1 - $scorePlayer2. fitnesse : $fitnesse")
+        scores.add(scorePlayer(game.player1) - scorePlayer(game.player2))
         return
     }
 
@@ -30,7 +25,7 @@ fun recurseGameSteps(game: Game, depth: Int, maxDepth: Int) {
                         wasPlaced = game.place(player, patch, anchor)
                         if (wasPlaced) {
                             val childGame = game.copy()
-                            recurseGameSteps(childGame, depth + 1, maxDepth)
+                            simulateGameStep(scores, childGame, maxDepth, depth + 1)
                         }
                     }
                 }
@@ -47,6 +42,8 @@ fun recurseGameSteps(game: Game, depth: Int, maxDepth: Int) {
     if (!wasPlaced) {
         game.advance(player)
         val childGame = game.copy()
-        recurseGameSteps(childGame, depth + 1, maxDepth)
+        simulateGameStep(scores, childGame, maxDepth, depth + 1)
     }
+
+    scores.add(scorePlayer(game.player1) - scorePlayer(game.player2))
 }

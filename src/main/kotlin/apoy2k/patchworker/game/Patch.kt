@@ -21,8 +21,8 @@ class Patch(
         val numCols = fields[0].size
 
         val newFields = List(numCols) { MutableList(numRows) { false } }
-        for (row in 0 until numRows) {
-            for (col in 0 until numCols) {
+        for (row in 0..<numRows) {
+            for (col in 0..<numCols) {
                 newFields[col][numRows - 1 - row] = fields[row][col]
             }
         }
@@ -35,8 +35,8 @@ class Patch(
         val numCols = fields[0].size
 
         val newFields = List(numRows) { MutableList(numCols) { false } }
-        for (row in 0 until numRows) {
-            for (col in 0 until numCols) {
+        for (row in 0..<numRows) {
+            for (col in 0..<numCols) {
                 newFields[row][col] = fields[row][numCols - 1 - col]
             }
         }
@@ -52,4 +52,24 @@ class Patch(
     )
 
     override fun toString() = name
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Patch) {
+            return false
+        }
+
+        return this.buttonCost == other.buttonCost
+                && this.timeCost == other.timeCost
+                && this.buttonIncome == other.buttonIncome
+                && this.fields == other.fields
+    }
+
+    override fun hashCode(): Int {
+        var result = buttonCost
+        result = 31 * result + timeCost
+        result = 31 * result + buttonIncome
+        result = 31 * result + name.hashCode()
+        result = 31 * result + fields.hashCode()
+        return result
+    }
 }
