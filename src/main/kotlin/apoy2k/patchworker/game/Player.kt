@@ -1,6 +1,7 @@
 package apoy2k.patchworker.game
 
 import kotlin.math.min
+import kotlin.system.exitProcess
 
 class Player(
     board: Fields = createBoard(),
@@ -51,6 +52,9 @@ class Player(
             buttonMultiplier += patch.buttonIncome
 
             if (patch.timeCost == 0) {
+                if (specialPatches == 0) {
+                    exitProcess(1)
+                }
                 specialPatches -= 1
             } else {
                 val income = calculateIncome(trackerPosition, patch.timeCost)
