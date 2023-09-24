@@ -27,7 +27,7 @@ fun main() {
 
         thread {
             val game = Game()
-            runGame(results, game, 10)
+            runGame(results, game, 5)
             finished = true
         }
     }

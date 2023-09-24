@@ -9,10 +9,9 @@ import kotlin.io.path.writeLines
 val log = LoggerFactory.getLogger("Simulator")
 
 fun runGame(scores: ConcurrentHashMap<Int, Int>, game: Game, maxDepth: Int, depth: Int = 0) {
-    var currentPlayer: Player? = game.nextPlayer
-    while (currentPlayer != null && depth < maxDepth) {
-        runPlayer(scores, game, currentPlayer, maxDepth, depth)
-        currentPlayer = game.nextPlayer
+    val currentPlayer = game.nextPlayer
+    if (currentPlayer != null && depth < maxDepth) {
+        spawnChildGames(scores, game, currentPlayer, maxDepth, depth)
     }
 
     printDebug(depth, "Game end or max depth reached for $game")
@@ -25,7 +24,13 @@ fun runGame(scores: ConcurrentHashMap<Int, Int>, game: Game, maxDepth: Int, dept
     scores[game.hashCode()] = scorePlayer(game.player1) - scorePlayer(game.player2)
 }
 
-private fun runPlayer(scores: ConcurrentHashMap<Int, Int>, game: Game, player: Player, maxDepth: Int, depth: Int = 0) {
+private fun spawnChildGames(
+    scores: ConcurrentHashMap<Int, Int>,
+    game: Game,
+    player: Player,
+    maxDepth: Int,
+    depth: Int = 0
+) {
     printDebug(depth, "Deciding moves for $player in $game")
     for (patch in game.getPatchOptions()) {
         repeat(2) { flip ->
@@ -37,7 +42,7 @@ private fun runPlayer(scores: ConcurrentHashMap<Int, Int>, game: Game, player: P
                         val anchor = Position(rowIdx, colIdx)
                         val childGame = game.copy()
                         printDebug(depth, "Creating copy of $game as $childGame to run patch place")
-                        runPlace(scores, childGame, patch, anchor, maxDepth, depth)
+                        runPlaceCopy(scores, childGame, patch, anchor, maxDepth, depth)
                     }
                 }
                 patch.rotate()
@@ -48,10 +53,10 @@ private fun runPlayer(scores: ConcurrentHashMap<Int, Int>, game: Game, player: P
 
     val childGame = game.copy()
     printDebug(depth, "Creating copy of $game as $childGame to run advance")
-    runAdvance(scores, childGame, maxDepth, depth)
+    runAdvanceCopy(scores, childGame, maxDepth, depth)
 }
 
-private fun runPlace(
+private fun runPlaceCopy(
     scores: ConcurrentHashMap<Int, Int>,
     game: Game,
     patch: Patch,
@@ -66,7 +71,7 @@ private fun runPlace(
     }
 }
 
-private fun runAdvance(
+private fun runAdvanceCopy(
     scores: ConcurrentHashMap<Int, Int>,
     game: Game,
     maxDepth: Int,
