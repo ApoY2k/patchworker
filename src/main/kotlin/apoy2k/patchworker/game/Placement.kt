@@ -4,7 +4,15 @@ typealias Position = Pair<Int, Int>
 
 class InvalidPlacementException : Exception()
 
-fun tryPlace(board: Fields, patch: Fields, anchor: Position): Fields {
+fun tryPlace(board: Fields, patch: Fields, anchor: Position) =
+    try {
+        val newBoard = place(board, patch, anchor)
+        Pair(true, newBoard)
+    } catch (ip: InvalidPlacementException) {
+        Pair(false, board)
+    }
+
+private fun place(board: Fields, patch: Fields, anchor: Position): Fields {
     val applyRowRange = anchor.first..<anchor.first + patch.size
     val applyColRange = anchor.second..<anchor.second + patch[0].size
 
@@ -17,7 +25,7 @@ fun tryPlace(board: Fields, patch: Fields, anchor: Position): Fields {
     }
 
     return board.mapIndexed { row, colFields ->
-        colFields.mapIndexed newField@ { col, field ->
+        colFields.mapIndexed newField@{ col, field ->
             // If the current field is not within the range of the patch, just return it as is
             val point = Position(row, col)
             if (!(point.first in applyRowRange && point.second in applyColRange)) {

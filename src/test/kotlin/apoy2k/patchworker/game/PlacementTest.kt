@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 class PlacementTest {
 
@@ -14,60 +14,57 @@ class PlacementTest {
     @MethodSource("applyPatchData")
     fun `apply patch`(inputBoard: Fields, patch: Fields, anchor: Position, expectedBoard: Fields) {
         val newBoard = tryPlace(inputBoard, patch, anchor)
-        assertEquals(expectedBoard, newBoard)
+        assertEquals(expectedBoard, newBoard.second)
     }
 
     @Test
     fun `apply patch over filled space`() {
-        assertFailsWith(InvalidPlacementException::class) {
-            tryPlace(
-                createPatchFields(
-                    O, X, X, null,
-                    O, O, O, null,
-                    O, O, O
-                ),
-                createPatchFields(
-                    X, null,
-                    X,
-                ),
-                Position(0, 2)
-            )
-        }
+        val result = tryPlace(
+            createPatchFields(
+                O, X, X, null,
+                O, O, O, null,
+                O, O, O
+            ),
+            createPatchFields(
+                X, null,
+                X,
+            ),
+            Position(0, 2)
+        )
+        assertFalse(result.first)
     }
 
     @Test
     fun `apply patch outside boundaries`() {
-        assertFailsWith(InvalidPlacementException::class) {
-            tryPlace(
-                createPatchFields(
-                    O, X, X, null,
-                    O, O, O, null,
-                    O, O, O
-                ),
-                createPatchFields(
-                    X, null,
-                    X,
-                ),
-                Position(2, 3)
-            )
-        }
+        val result = tryPlace(
+            createPatchFields(
+                O, X, X, null,
+                O, O, O, null,
+                O, O, O
+            ),
+            createPatchFields(
+                X, null,
+                X,
+            ),
+            Position(2, 3)
+        )
+        assertFalse(result.first)
     }
 
     @Test
     fun `apply patch that leaks outside boundaries`() {
-        assertFailsWith(InvalidPlacementException::class) {
-            tryPlace(
-                createPatchFields(
-                    O, X, X, null,
-                    O, O, O, null,
-                    O, O, O
-                ),
-                createPatchFields(
-                    X, X, X, X
-                ),
-                Position(2, 1)
-            )
-        }
+        val result = tryPlace(
+            createPatchFields(
+                O, X, X, null,
+                O, O, O, null,
+                O, O, O
+            ),
+            createPatchFields(
+                X, X, X, X
+            ),
+            Position(2, 1)
+        )
+        assertFalse(result.first)
     }
 
     companion object {

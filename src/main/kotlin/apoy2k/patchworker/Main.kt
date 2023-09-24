@@ -27,7 +27,7 @@ fun main() {
 
         thread {
             val game = Game()
-            simulateStep(results, game, 10)
+            runGame(results, game, 10)
             finished = true
         }
     }

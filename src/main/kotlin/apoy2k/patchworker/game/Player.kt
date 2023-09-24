@@ -44,8 +44,9 @@ class Player(
             return false
         }
 
-        return try {
-            board = tryPlace(board, patch.fields, anchor)
+        val placeResult = tryPlace(board, patch.fields, anchor)
+        if (placeResult.first) {
+            board = placeResult.second
 
             buttons -= patch.buttonCost
             buttonMultiplier += patch.buttonIncome
@@ -60,11 +61,9 @@ class Player(
             }
 
             actionsTaken++
-
-            true
-        } catch (ip: InvalidPlacementException) {
-            false
         }
+
+        return placeResult.first
     }
 
     fun copy() = Player(
