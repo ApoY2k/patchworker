@@ -64,6 +64,19 @@ class Game(
         return wasPlaced
     }
 
+    fun copy() = Game(
+        patches.map { it.copy() }.toMutableList(),
+        player1.copy(),
+        player2.copy(),
+        nextPlayer?.copy()
+    )
+
+
+    fun gameStateHash(): Int {
+        // TODO built a unique identifier for the game state
+        // to use it as key for the score map
+    }
+
     private fun resetNextPlayer() {
         val trackSorted = listOf(player1, player2)
             .filter { it.trackerPosition < 53 }
@@ -76,11 +89,4 @@ class Game(
             else -> specialPatchPlayer
         }
     }
-
-    fun copy() = Game(
-        patches.map { it.copy() }.toMutableList(),
-        player1.copy(),
-        player2.copy(),
-        nextPlayer?.copy()
-    )
 }

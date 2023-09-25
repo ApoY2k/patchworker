@@ -5,16 +5,16 @@
         </encoder>
     </appender>
 
-    <appender name="SIMULATOR_LOG_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>data_log.txt</file>
+    <appender name="GENERATOR_LOG_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>data/generator_log.txt</file>
         <append>false</append>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level -%kvp- %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="Simulator" level="debug">
-        <appender-ref ref="SIMULATOR_LOG_FILE"/>
+    <logger name="apoy2k.patchworker.generator" level="info" additivity="false">
+        <appender-ref ref="GENERATOR_LOG_FILE"/>
     </logger>
 
     <root>

@@ -1,27 +1,26 @@
-package apoy2k.patchworker
+package apoy2k.patchworker.generator
 
 import apoy2k.patchworker.game.*
-import org.slf4j.LoggerFactory
-import java.nio.file.StandardOpenOption
+import apoy2k.patchworker.writer
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.writeLines
 
-val log = LoggerFactory.getLogger("Simulator")
+private val log = KotlinLogging.logger {}
 
-fun runGame(scores: ConcurrentHashMap<Int, Int>, game: Game, maxDepth: Int, depth: Int = 0) {
+fun runGame(scores: ConcurrentHashMap<Int, Int>, game: Game, maxDepth: Int, depth: Int) {
     val currentPlayer = game.nextPlayer
     if (currentPlayer != null && depth < maxDepth) {
         spawnChildGames(scores, game, currentPlayer, maxDepth, depth)
+    } else {
+        if (!scores.containsKey(game.gameStateHash())) {
+            printDebug(depth, "Game end reached for $game")
+            val lines = mutableListOf("$game -------------------------------------------")
+            lines.addAll(renderGame(game))
+            writer.write(lines.joinToString { "\r\n" }) // TODO doesnt work :(
+            scores[game.gameStateHash()] = scorePlayer(game.player1) - scorePlayer(game.player2)
+        }
     }
-
-    printDebug(depth, "Game end or max depth reached for $game")
-    dataFile.writeLines(
-        listOf("$game ------------------------------------------------"),
-        Charsets.UTF_8,
-        StandardOpenOption.APPEND
-    )
-    dataFile.writeLines(renderGame(game), Charsets.UTF_8, StandardOpenOption.APPEND)
-    scores[game.hashCode()] = scorePlayer(game.player1) - scorePlayer(game.player2)
+    writer.flush()
 }
 
 private fun spawnChildGames(
@@ -29,25 +28,26 @@ private fun spawnChildGames(
     game: Game,
     player: Player,
     maxDepth: Int,
-    depth: Int = 0
+    depth: Int
 ) {
     printDebug(depth, "Deciding moves for $player in $game")
     for (patch in game.getPatchOptions()) {
-        repeat(2) { flip ->
-            printDebug(depth, "Flip loop #$flip for $player in $game")
-            repeat(3) { rotate ->
-                printDebug(depth, "Rotate loop #$rotate for $player in $game")
-                player.board.forEachIndexed { rowIdx, fields ->
-                    fields.forEachIndexed { colIdx, _ ->
+        player.board.forEachIndexed { rowIdx, fields ->
+            fields.forEachIndexed { colIdx, _ ->
+                repeat(1) { flip ->
+                    printDebug(depth, "Flip loop #$flip for $player in $game")
+                    repeat(3) { rotate ->
+                        printDebug(depth, "Rotate loop #$rotate for $player in $game")
                         val anchor = Position(rowIdx, colIdx)
                         val childGame = game.copy()
                         printDebug(depth, "Creating copy of $game as $childGame to run patch place")
                         runPlaceCopy(scores, childGame, patch, anchor, maxDepth, depth)
+                        patch.rotate()
                     }
+                    patch.rotate()
+                    patch.flip()
                 }
-                patch.rotate()
             }
-            patch.flip()
         }
     }
 
@@ -62,7 +62,7 @@ private fun runPlaceCopy(
     patch: Patch,
     anchor: Pair<Int, Int>,
     maxDepth: Int,
-    depth: Int = 0
+    depth: Int
 ) {
     printDebug(depth, "Placing $patch at $anchor for ${game.nextPlayer} in $game")
     if (game.place(patch, anchor)) {
@@ -75,7 +75,7 @@ private fun runAdvanceCopy(
     scores: ConcurrentHashMap<Int, Int>,
     game: Game,
     maxDepth: Int,
-    depth: Int = 0
+    depth: Int
 ) {
     printDebug(depth, "Advancing ${game.nextPlayer} in $game")
     game.advance()
@@ -84,7 +84,7 @@ private fun runAdvanceCopy(
 }
 
 private fun printDebug(depth: Int, message: String) {
-    log.debug("   -".repeat(depth) + "> {}", message)
+    log.debug { "   -".repeat(depth) + "> $message" }
 }
 
 private fun renderGame(game: Game): List<String> {
