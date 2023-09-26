@@ -20,7 +20,7 @@ fun main() {
 
     runBlocking {
         var finished = false
-        val results = ConcurrentHashMap<Game, Int>()
+        val results = ConcurrentHashMap<String, Int>()
 
         thread {
             while (!finished) {

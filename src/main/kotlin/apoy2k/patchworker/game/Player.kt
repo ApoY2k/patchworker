@@ -74,4 +74,13 @@ class Player(
         specialPatches,
         actionsTaken
     )
+
+    fun stateChecksum() = StringBuilder()
+        .append(trackerPosition)
+        .append(buttonMultiplier)
+        .append(buttons)
+        .append(specialPatches)
+        .append(actionsTaken)
+        .append(board.stateChecksum())
+        .toString()
 }

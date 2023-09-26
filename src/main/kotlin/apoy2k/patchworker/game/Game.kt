@@ -53,7 +53,7 @@ class Game(
 
         val wasPlaced = player.place(patch, anchor)
         if (wasPlaced) {
-            val distance = patches.take(3).indexOf(patch)
+            val distance = patches.take(3).indexOf(patch) // TODO Must work with copied, rotated patches
             patches.remove(patch)
             if (distance > 0) {
                 Collections.rotate(patches, distance)
@@ -71,11 +71,12 @@ class Game(
         nextPlayer?.copy()
     )
 
-
-    fun gameStateHash(): Int {
-        // TODO built a unique identifier for the game state
-        // to use it as key for the score map
-    }
+    fun stateChecksum() = StringBuilder()
+        .append(patches.map { it.stateChecksum() })
+        .append(player1.stateChecksum())
+        .append(player2.stateChecksum())
+        .append(nextPlayer?.stateChecksum())
+        .toString()
 
     private fun resetNextPlayer() {
         val trackSorted = listOf(player1, player2)

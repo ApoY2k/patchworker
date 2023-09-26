@@ -7,24 +7,24 @@ import java.util.concurrent.ConcurrentHashMap
 
 private val log = KotlinLogging.logger {}
 
-fun runGame(scores: ConcurrentHashMap<Int, Int>, game: Game, maxDepth: Int, depth: Int) {
+fun runGame(scores: ConcurrentHashMap<String, Int>, game: Game, maxDepth: Int, depth: Int) {
     val currentPlayer = game.nextPlayer
     if (currentPlayer != null && depth < maxDepth) {
         spawnChildGames(scores, game, currentPlayer, maxDepth, depth)
     } else {
-        if (!scores.containsKey(game.gameStateHash())) {
+        if (!scores.containsKey(game.stateChecksum())) {
             printDebug(depth, "Game end reached for $game")
             val lines = mutableListOf("$game -------------------------------------------")
             lines.addAll(renderGame(game))
             writer.write(lines.joinToString { "\r\n" }) // TODO doesnt work :(
-            scores[game.gameStateHash()] = scorePlayer(game.player1) - scorePlayer(game.player2)
+            scores[game.stateChecksum()] = scorePlayer(game.player1) - scorePlayer(game.player2)
         }
     }
     writer.flush()
 }
 
 private fun spawnChildGames(
-    scores: ConcurrentHashMap<Int, Int>,
+    scores: ConcurrentHashMap<String, Int>,
     game: Game,
     player: Player,
     maxDepth: Int,
@@ -57,7 +57,7 @@ private fun spawnChildGames(
 }
 
 private fun runPlaceCopy(
-    scores: ConcurrentHashMap<Int, Int>,
+    scores: ConcurrentHashMap<String, Int>,
     game: Game,
     patch: Patch,
     anchor: Pair<Int, Int>,
@@ -72,7 +72,7 @@ private fun runPlaceCopy(
 }
 
 private fun runAdvanceCopy(
-    scores: ConcurrentHashMap<Int, Int>,
+    scores: ConcurrentHashMap<String, Int>,
     game: Game,
     maxDepth: Int,
     depth: Int

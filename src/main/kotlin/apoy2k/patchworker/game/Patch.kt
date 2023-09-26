@@ -42,29 +42,17 @@ class Patch(
         fields = newFields
     }
 
+    fun stateChecksum() = StringBuilder()
+        .append(buttonCost)
+        .append(timeCost)
+        .append(buttonIncome)
+        .append(fields.stateChecksum())
+        .toString()
+
     fun copy() = Patch(
         buttonCost,
         timeCost,
         buttonIncome,
         fields.map { it.toMutableList() }.toMutableList()
     )
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is Patch) {
-            return false
-        }
-
-        return this.buttonCost == other.buttonCost
-                && this.timeCost == other.timeCost
-                && this.buttonIncome == other.buttonIncome
-                && this.fields == other.fields
-    }
-
-    override fun hashCode(): Int {
-        var result = buttonCost
-        result = 31 * result + timeCost
-        result = 31 * result + buttonIncome
-        result = 31 * result + fields.hashCode()
-        return result
-    }
 }
