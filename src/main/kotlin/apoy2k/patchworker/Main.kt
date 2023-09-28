@@ -26,11 +26,9 @@ fun main() {
             }
         }
 
-        for (maxDepth in 1..50) {
-            thread {
-                val game = Game()
-                runGame(results, game, maxDepth, 0)
-            }
+        thread {
+            val game = Game()
+            runGame(results, game, 50, 0)
         }
     }
 }
