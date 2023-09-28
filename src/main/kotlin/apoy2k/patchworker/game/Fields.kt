@@ -1,22 +1,27 @@
 package apoy2k.patchworker.game
 
-typealias Fields = List<List<Boolean>>
+typealias Fields = List<FieldRow>
+typealias FieldRow = List<Boolean>
 
 const val O = false
 const val X = true
 
-fun Fields.checksum(): Long {
-    var result = 0L
-    for (row in 0..<8) {
-        for (col in 0..<8) {
-            val field = this.getOrNull(row)?.getOrNull(col)
-            if (field != null) {
-                result = result.shl(1)
-                result += when (field) {
-                    true -> 1
-                    else -> 0
-                }
-            }
+fun Fields.checksum(): String {
+    val result = StringBuilder()
+    val list = this.flatten()
+    result.append(list.checksum(0)).append(":")
+    result.append(list.checksum(3)).append(":")
+    result.append(list.checksum(6))
+    return result.toString()
+}
+
+private fun FieldRow.checksum(start: Int): Int {
+    var result = 0
+    for (idx in start..start + 2) {
+        result = result.shl(1)
+        result += when (this[idx]) {
+            true -> 1
+            else -> 0
         }
     }
     return result

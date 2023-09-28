@@ -14,13 +14,14 @@ fun runGame(scores: ConcurrentHashMap<String, Int>, game: Game, maxDepth: Int, d
     } else {
         if (!scores.containsKey(game.checksum())) {
             printDebug(depth, "Game end reached for $game")
+            val score = scorePlayer(game.player1) - scorePlayer(game.player2)
             val lines = StringBuilder()
-                .append("-------------------------------------------------\r\n")
-                .append("$game\r\n")
-                .append(renderGame(game).joinToString("\r\n"))
+                .append(game.checksum())
+                .append(",")
+                .append(score)
                 .append("\r\n")
             writer.write(lines.toString())
-            scores[game.checksum()] = scorePlayer(game.player1) - scorePlayer(game.player2)
+            scores[game.checksum()] = score
         }
     }
     writer.flush()
@@ -88,37 +89,4 @@ private fun runAdvanceCopy(
 
 private fun printDebug(depth: Int, message: String) {
     log.debug { "   -".repeat(depth) + "> $message" }
-}
-
-private fun renderGame(game: Game): List<String> {
-    val result = mutableListOf<String>()
-    result.add("- Player1: ${game.player1}")
-    result.addAll(renderPlayer(game.player1))
-    result.add("- Player2: ${game.player2}")
-    result.addAll(renderPlayer(game.player2))
-    return result
-}
-
-private fun renderPlayer(player: Player): List<String> {
-    val result = mutableListOf<String>()
-    player.board.forEach { row ->
-        val line = StringBuilder()
-        row.forEach { field ->
-            line.append(
-                when (field) {
-                    true -> " X "
-                    else -> "   "
-                }
-            )
-        }
-        result.add(line.toString())
-    }
-    result.add(
-        "ActionsTaken:${player.actionsTaken} " +
-                "Track:${player.trackerPosition} " +
-                "Buttons:${player.buttons} " +
-                "SpecialPatches:${player.specialPatches} " +
-                "Score:${scorePlayer(player)}"
-    )
-    return result
 }

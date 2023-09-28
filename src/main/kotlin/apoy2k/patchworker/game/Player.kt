@@ -73,11 +73,11 @@ class Player(
     )
 
     fun checksum() = StringBuilder()
-        .append(trackerPosition).append(".")
-        .append(buttonMultiplier).append(".")
-        .append(buttons).append(".")
-        .append(specialPatches).append(".")
-        .append(actionsTaken).append(".")
+        .append(trackerPosition).append(",")
+        .append(buttonMultiplier).append(",")
+        .append(buttons).append(",")
+        .append(specialPatches).append(",")
+        .append(actionsTaken).append(",")
         .append(board.checksum())
         .toString()
 }

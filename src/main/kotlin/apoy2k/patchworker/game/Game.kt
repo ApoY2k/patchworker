@@ -73,11 +73,13 @@ class Game(
     )
 
     fun checksum() = StringBuilder()
-        .append(patches.joinToString(",") { it.id }).append(".")
-        .append(player1.checksum()).append(".")
-        .append(player2.checksum()).append(".")
-        .append(nextPlayer?.checksum())
+        .append(patches.joinToString(":") { it.id }).append(",")
+        .append(player1.checksum()).append(",")
+        .append(player2.checksum()).append(",")
+        .append(isPlayer1Turn())
         .toString()
+
+    private fun isPlayer1Turn() = nextPlayer == player1
 
     private fun resetNextPlayer() {
         val trackSorted = listOf(player1, player2)
