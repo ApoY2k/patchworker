@@ -287,4 +287,4 @@ fun generatePatches() = mutableListOf(
     createPatch_4X3_Z(),
     createPatch_5X1_I(),
     createPatch_5X3_X()
-)
+).also { it.shuffle() }
