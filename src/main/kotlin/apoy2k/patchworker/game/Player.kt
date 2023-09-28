@@ -2,22 +2,10 @@ package apoy2k.patchworker.game
 
 import kotlin.math.min
 
-fun createBoard() = createPatchFields(
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O, null,
-    O, O, O, O, O, O, O, O, O
-)
-
 class Player(
     board: Fields = createBoard(),
     trackerPosition: Int = 0,
-    buttonMultiplier: Int = 0,
+    private var buttonMultiplier: Int = 0,
     buttons: Int = 5,
     specialPatches: Int = 0,
     actionsTaken: Int = 0
@@ -26,9 +14,6 @@ class Player(
         private set
 
     var trackerPosition: Int = trackerPosition
-        private set
-
-    var buttonMultiplier: Int = buttonMultiplier
         private set
 
     var buttons: Int = buttons

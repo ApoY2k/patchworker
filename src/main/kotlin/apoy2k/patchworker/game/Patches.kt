@@ -2,8 +2,6 @@
 
 package apoy2k.patchworker.game
 
-const val O = false
-const val X = true
 const val SPECIAL_PATCH_ID = "special"
 
 /**
