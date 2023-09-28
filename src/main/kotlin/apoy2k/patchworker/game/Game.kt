@@ -53,14 +53,15 @@ class Game(
 
         val wasPlaced = player.place(patch, anchor)
         if (wasPlaced) {
-            val distance = patches.take(3).indexOf(patch) // TODO Must work with copied, rotated patches
-            patches.remove(patch)
-            if (distance > 0) {
-                Collections.rotate(patches, distance)
+            if (patch.id != SPECIAL_PATCH_ID) {
+                val distance = patches.indexOfFirst { it.id == patch.id }
+                patches.removeAt(distance)
+                if (distance > 0) {
+                    Collections.rotate(patches, distance)
+                }
             }
             resetNextPlayer()
         }
-
         return wasPlaced
     }
 
@@ -71,11 +72,11 @@ class Game(
         nextPlayer?.copy()
     )
 
-    fun stateChecksum() = StringBuilder()
-        .append(patches.map { it.stateChecksum() })
-        .append(player1.stateChecksum())
-        .append(player2.stateChecksum())
-        .append(nextPlayer?.stateChecksum())
+    fun checksum() = StringBuilder()
+        .append(patches.joinToString(",") { it.id }).append(".")
+        .append(player1.checksum()).append(".")
+        .append(player2.checksum()).append(".")
+        .append(nextPlayer?.checksum())
         .toString()
 
     private fun resetNextPlayer() {

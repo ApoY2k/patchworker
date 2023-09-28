@@ -27,7 +27,7 @@ class GameTest {
 
     @Test
     fun `earning special tile brings extra turn to place it`() {
-        val patches = listOf(Patch(0, 30, 0, createPatchFields(X)))
+        val patches = listOf(Patch("1", 0, 30, 0, createPatchFields(X)))
         val game = Game(patches.toMutableList())
 
         game.place(patches[0], Position(0, 0))
@@ -36,33 +36,41 @@ class GameTest {
         val patchOptions = game.getPatchOptions()
 
         assertEquals(1, nextPlayer.specialPatches)
-        assertEquals(createSpecialPatch(), patchOptions[0])
+        assertEquals(createSpecialPatch().id, patchOptions[0].id)
         assertEquals(game.player1, nextPlayer)
     }
 
     @Test
     fun `state checksum of equivalent games match but games are not equal`() {
-        val patches1 = listOf(Patch(0, 30, 0, createPatchFields(X)))
+        val patches1 = listOf(Patch("1", 0, 30, 0, createPatchFields(X)))
         val game1 = Game(patches1.toMutableList())
 
         game1.place(patches1[0], Position(0, 0))
 
-        val patches2 = listOf(Patch(0, 30, 0, createPatchFields(X)))
+        val patches2 = listOf(Patch("1", 0, 30, 0, createPatchFields(X)))
         val game2 = Game(patches2.toMutableList())
 
         game2.place(patches2[0], Position(0, 0))
 
         assertNotEquals(game1, game2)
-        assertEquals(game1.stateChecksum(), game2.stateChecksum())
+        assertEquals(game1.checksum(), game2.checksum())
     }
 
     @Test
     fun `placing a copied rotated patch removes it from available patch options`() {
-        val patches = listOf(Patch(1, 1, 1, createPatchFields(X, O, null, X, X)))
+        val patches = listOf(Patch("1", 1, 1, 1, createPatchFields(X, O, null, X, X)))
         val game = Game(patches.toMutableList())
         val copiedPatch = patches[0].copy()
         copiedPatch.rotate()
         game.place(copiedPatch, Position(0, 0))
         assertEquals(0, game.getRemainingPatches())
+    }
+
+    @Test
+    fun `checksum stays stable for copies`() {
+        val patches = listOf(Patch("1", 1, 1, 1, createPatchFields(X, O, null, X, X)))
+        val game = Game(patches.toMutableList())
+        val copy = game.copy()
+        assertEquals(game.checksum(), copy.checksum())
     }
 }

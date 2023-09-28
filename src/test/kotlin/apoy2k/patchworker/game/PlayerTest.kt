@@ -9,7 +9,7 @@ class PlayerTest {
     @Test
     fun `place patch mutate player`() {
         val player = Player()
-        val patch = Patch(2, 2, 0, createPatchFields(X, X))
+        val patch = Patch("1", 2, 2, 0, createPatchFields(X, X))
         player.place(patch, Position(0, 0))
         assertEquals(2, player.trackerPosition)
         assertEquals(3, player.buttons)
@@ -18,14 +18,14 @@ class PlayerTest {
     @Test
     fun `prevent placing too expensive patches`() {
         val player = Player()
-        val patch = Patch(6, 2, 0, createPatchFields(X, X))
+        val patch = Patch("1", 6, 2, 0, createPatchFields(X, X))
         assertFalse(player.place(patch, Position(0, 0)))
     }
 
     @Test
     fun `place patch mutate player an calculates incomes`() {
         val player = Player()
-        val patch = Patch(2, 5, 1, createPatchFields(X, X))
+        val patch = Patch("1", 2, 5, 1, createPatchFields(X, X))
         player.place(patch, Position(0, 0))
         assertEquals(5, player.trackerPosition)
 
@@ -38,7 +38,7 @@ class PlayerTest {
     @Test
     fun `score player after placing patch`() {
         val player = Player()
-        val patch = Patch(2, 5, 1, createPatchFields(X, X))
+        val patch = Patch("1", 2, 5, 1, createPatchFields(X, X))
         player.place(patch, Position(0, 0))
 
         // -162 initial
@@ -67,7 +67,7 @@ class PlayerTest {
     fun `player advances and gets income when already having button income`() {
         val player = Player()
         player.advance(20)
-        player.place(Patch(5, 20, 5, createPatchFields(X)), Position(0, 0))
+        player.place(Patch("1", 5, 20, 5, createPatchFields(X)), Position(0, 0))
 
         // -162 initial
         // +5 initial buttons

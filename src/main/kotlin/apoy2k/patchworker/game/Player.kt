@@ -2,6 +2,18 @@ package apoy2k.patchworker.game
 
 import kotlin.math.min
 
+fun createBoard() = createPatchFields(
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O, null,
+    O, O, O, O, O, O, O, O, O
+)
+
 class Player(
     board: Fields = createBoard(),
     trackerPosition: Int = 0,
@@ -51,7 +63,7 @@ class Player(
             buttons -= patch.buttonCost
             buttonMultiplier += patch.buttonIncome
 
-            if (patch.timeCost == 0) {
+            if (patch.id == SPECIAL_PATCH_ID) {
                 specialPatches -= 1
             } else {
                 val income = calculateIncome(trackerPosition, patch.timeCost)
@@ -75,12 +87,12 @@ class Player(
         actionsTaken
     )
 
-    fun stateChecksum() = StringBuilder()
-        .append(trackerPosition)
-        .append(buttonMultiplier)
-        .append(buttons)
-        .append(specialPatches)
-        .append(actionsTaken)
-        .append(board.stateChecksum())
+    fun checksum() = StringBuilder()
+        .append(trackerPosition).append(".")
+        .append(buttonMultiplier).append(".")
+        .append(buttons).append(".")
+        .append(specialPatches).append(".")
+        .append(actionsTaken).append(".")
+        .append(board.checksum())
         .toString()
 }

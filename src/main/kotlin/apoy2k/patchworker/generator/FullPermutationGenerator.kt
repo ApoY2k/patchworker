@@ -12,12 +12,15 @@ fun runGame(scores: ConcurrentHashMap<String, Int>, game: Game, maxDepth: Int, d
     if (currentPlayer != null && depth < maxDepth) {
         spawnChildGames(scores, game, currentPlayer, maxDepth, depth)
     } else {
-        if (!scores.containsKey(game.stateChecksum())) {
+        if (!scores.containsKey(game.checksum())) {
             printDebug(depth, "Game end reached for $game")
-            val lines = mutableListOf("$game -------------------------------------------")
-            lines.addAll(renderGame(game))
-            writer.write(lines.joinToString { "\r\n" }) // TODO doesnt work :(
-            scores[game.stateChecksum()] = scorePlayer(game.player1) - scorePlayer(game.player2)
+            val lines = StringBuilder()
+                .append("-------------------------------------------------\r\n")
+                .append("$game\r\n")
+                .append(renderGame(game).joinToString("\r\n"))
+                .append("\r\n")
+            writer.write(lines.toString())
+            scores[game.checksum()] = scorePlayer(game.player1) - scorePlayer(game.player2)
         }
     }
     writer.flush()
@@ -32,11 +35,11 @@ private fun spawnChildGames(
 ) {
     printDebug(depth, "Deciding moves for $player in $game")
     for (patch in game.getPatchOptions()) {
-        player.board.forEachIndexed { rowIdx, fields ->
-            fields.forEachIndexed { colIdx, _ ->
-                repeat(1) { flip ->
+        for ((rowIdx, fields) in player.board.withIndex()) {
+            for ((colIdx, _) in fields.withIndex()) {
+                repeat(2) { flip ->
                     printDebug(depth, "Flip loop #$flip for $player in $game")
-                    repeat(3) { rotate ->
+                    repeat(4) { rotate ->
                         printDebug(depth, "Rotate loop #$rotate for $player in $game")
                         val anchor = Position(rowIdx, colIdx)
                         val childGame = game.copy()

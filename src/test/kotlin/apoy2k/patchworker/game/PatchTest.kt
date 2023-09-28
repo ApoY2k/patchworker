@@ -11,7 +11,7 @@ class PatchTest {
     @ParameterizedTest
     @MethodSource("rotatePatchData")
     fun `rotate patch`(initialPatch: List<List<Boolean>>, expectedRotated: List<List<Boolean>>) {
-        val patch = Patch(0, 0, 0, initialPatch)
+        val patch = Patch("1", 0, 0, 0, initialPatch)
         patch.rotate()
         assertEquals(expectedRotated, patch.fields)
     }
@@ -19,12 +19,13 @@ class PatchTest {
     @ParameterizedTest
     @MethodSource("flipPatchData")
     fun `flip patch`(initialPatch: List<List<Boolean>>, expectedFlipped: List<List<Boolean>>) {
-        val patch = Patch(0, 0, 0, initialPatch)
+        val patch = Patch("1", 0, 0, 0, initialPatch)
         patch.flip()
         assertEquals(expectedFlipped, patch.fields)
     }
 
     companion object {
+
         @JvmStatic
         private fun rotatePatchData() = Stream.of(
             Arguments.of(createPatchFields(X, X), createPatchFields(X, null, X)),
