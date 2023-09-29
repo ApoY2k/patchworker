@@ -1,5 +1,7 @@
 package apoy2k.patchworker.game
 
+import java.math.BigInteger
+
 typealias Fields = List<FieldRow>
 typealias FieldRow = List<Boolean>
 
@@ -7,24 +9,15 @@ const val O = false
 const val X = true
 
 fun Fields.checksum(): String {
-    val result = StringBuilder()
-    val list = this.flatten()
-    result.append(list.checksum(0)).append(":")
-    result.append(list.checksum(27)).append(":")
-    result.append(list.checksum(54))
-    return result.toString()
-}
-
-private fun FieldRow.checksum(start: Int): Int {
-    var result = 0
-    for (idx in start..start + 26) {
+    var result = BigInteger.ZERO
+    for (field in this.flatten()) {
         result = result.shl(1)
-        result += when (this[idx]) {
-            true -> 1
-            else -> 0
+        result += when (field) {
+            true -> BigInteger.ONE
+            else -> BigInteger.ZERO
         }
     }
-    return result
+    return result.toString()
 }
 
 fun createBoard() = createPatchFields(
