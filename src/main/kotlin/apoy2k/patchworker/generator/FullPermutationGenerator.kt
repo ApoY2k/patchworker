@@ -1,11 +1,42 @@
 package apoy2k.patchworker.generator
 
 import apoy2k.patchworker.game.*
-import apoy2k.patchworker.writer
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.*
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import kotlin.io.path.Path
+import kotlin.io.path.bufferedWriter
 
 private val log = KotlinLogging.logger {}
+
+val dataFile = Path("data/generated_end_states.csv")
+val writer = dataFile.bufferedWriter(Charsets.UTF_8, DEFAULT_BUFFER_SIZE, StandardOpenOption.CREATE)
+
+fun main() {
+    writer.write("PATCHES,PLAYER1_TRACKER_POS,PLAYER1_MULTIPLIER,PLAYER1_BUTTONS,PLAYER1_SPECIALPATCHES,PLAYER1_ACTIONS,PLAYER1_BOARD,PLAYER2_TRACKER_POS,PLAYER2_MULTIPLIER,PLAYER2_BUTTONS,PLAYER2_SPECIALPATCHES,PLAYER2_ACTIONS,PLAYER2_BOARD,IS_PLAYER1_TURN,SCORE\r\n")
+    writer.flush()
+
+    val results = ConcurrentHashMap<String, Int>()
+    val parallelism = Runtime.getRuntime().availableProcessors()
+    val gameSimDispatcher = Executors.newFixedThreadPool(parallelism).asCoroutineDispatcher()
+
+    runBlocking {
+        launch(Dispatchers.IO) {
+            while (isActive) {
+                delay(100)
+                print("\r${results.size} end states collected")
+            }
+        }
+
+        repeat(parallelism) {
+            launch(gameSimDispatcher) {
+                runGame(results, Game(), 50, 0)
+            }
+        }
+    }
+}
 
 fun runGame(scores: ConcurrentHashMap<String, Int>, game: Game, maxDepth: Int, depth: Int) {
     val currentPlayer = game.nextPlayer
