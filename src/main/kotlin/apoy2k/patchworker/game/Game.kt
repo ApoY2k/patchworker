@@ -73,7 +73,7 @@ class Game(
     )
 
     fun checksum() = StringBuilder()
-        .append(patches.joinToString(":") { it.id }).append(",")
+        .append(patches.checksum()).append(",")
         .append(player1.checksum()).append(",")
         .append(player2.checksum()).append(",")
         .append(isPlayer1Turn())

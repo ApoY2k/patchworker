@@ -2,6 +2,8 @@
 
 package apoy2k.patchworker.game
 
+import java.math.BigInteger
+
 const val SPECIAL_PATCH_ID = "special"
 
 /**
@@ -288,3 +290,48 @@ fun generatePatches() = mutableListOf(
     createPatch_5X1_I(),
     createPatch_5X3_X()
 ).also { it.shuffle() }
+
+fun List<Patch>.checksum(): String {
+    var result = BigInteger.ZERO
+    listOf(
+        "2X1_I",
+        "2X2_L",
+        "2X2_L2",
+        "2X2_O",
+        "2X3_P",
+        "3X1_I",
+        "3X2_L",
+        "3X2_L2",
+        "3X2_T",
+        "3X2_U",
+        "3X2_Z",
+        "3X2_Z2",
+        "3X3_H",
+        "3X3_Q",
+        "3X3_T",
+        "3X3_W",
+        "3X3_X",
+        "3X3_Y",
+        "3X4_T",
+        "4X1_I",
+        "4X2_L",
+        "4X2_P",
+        "4X2_R",
+        "4X2_T",
+        "4X2_U",
+        "4X2_Z",
+        "4X2_Z2",
+        "4X3_K",
+        "4X3_O",
+        "4X3_X",
+        "4X3_Z",
+        "5X1_I",
+        "5X3_X"
+    ).forEach { id ->
+        result = result.shl(1)
+        if (this.any { it.id == id }) {
+            result += BigInteger.ONE
+        }
+    }
+    return result.toString()
+}

@@ -61,7 +61,7 @@ fun main() {
         trainLabelsPath = "train",
         testFeaturesPath = "test",
         testLabelsPath = "test",
-        numClasses = 0,
+        numClasses = 10,
         featuresExtractor = { x -> featureExtract(x) },
         labelExtractor = { x, _ -> labelExtract(x) }
     )
@@ -72,8 +72,8 @@ fun main() {
     ).use {
         it.compile(
             optimizer = Adam(),
-            loss = Losses.SOFT_MAX_CROSS_ENTROPY_WITH_LOGITS,
-            metric = Metrics.ACCURACY
+            loss = Losses.MSE,
+            metric = Metrics.MAE
         )
 
         it.printSummary()
@@ -85,8 +85,12 @@ fun main() {
         val accuracy = it.evaluate(
             dataset = testSet
         )
-            .metrics[Metrics.ACCURACY]
+            .metrics[Metrics.MAE]
 
         println("Accuracy: $accuracy")
+
+        val pred = it.predictSoftly(listOf(1f, 2f).toFloatArray())
+
+        println("Prediction for (1, 2): ${pred.toList()}")
     }
 }
