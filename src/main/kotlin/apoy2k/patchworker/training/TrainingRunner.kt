@@ -12,10 +12,10 @@ import org.jetbrains.kotlinx.dl.dataset.OnHeapDataset
 fun main() {
 
     val (trainSet, testSet) = OnHeapDataset.createTrainAndTestDatasets(
-        trainFeaturesPath = "data/generated_end_states.csv",
-        trainLabelsPath = "data/generated_end_states.csv",
-        testFeaturesPath = "data/generated_end_states.csv",
-        testLabelsPath = "data/generated_end_states.csv",
+        trainFeaturesPath = "data/training.csv",
+        trainLabelsPath = "data/training.csv",
+        testFeaturesPath = "data/test.csv",
+        testLabelsPath = "data/test.csv",
         numClasses = 0,
         featuresExtractor = { extractFeaturesFromCsv(it) },
         labelExtractor = { path, y -> extractLabelsFromCsv(path, y) }
@@ -37,7 +37,7 @@ fun main() {
 
         it.fit(
             dataset = trainSet,
-            epochs = 100
+            epochs = 20
         )
 
         val accuracy = it.evaluate(
