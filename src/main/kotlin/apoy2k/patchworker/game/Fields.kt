@@ -10,8 +10,10 @@ const val X = true
 
 fun Fields.checksum(): String {
     var result = BigInteger.ZERO
-    for (field in this.flatten()) {
-        result = result.shl(1)
+    for ((idx, field) in this.flatten().withIndex()) {
+        if (idx > 0) {
+            result = result.shl(1)
+        }
         result += when (field) {
             true -> BigInteger.ONE
             else -> BigInteger.ZERO

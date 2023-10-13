@@ -9,65 +9,22 @@ import org.jetbrains.kotlinx.dl.api.core.optimizer.Adam
 import org.jetbrains.kotlinx.dl.api.summary.printSummary
 import org.jetbrains.kotlinx.dl.dataset.OnHeapDataset
 
-val train = listOf(
-    listOf(1, 2, 3),
-    listOf(0, 3, 3),
-    listOf(-5, 2, -3),
-    listOf(5, 2, 7),
-    listOf(2, 7, 9),
-    listOf(-3, -2, -5),
-    listOf(-9, 2, -7),
-    listOf(5, 1, 6),
-    listOf(2, 2, 4),
-    listOf(-3, 6, 3),
-)
-
-val test = listOf(
-    listOf(2, 2, 4),
-    listOf(0, 1, 1),
-    listOf(-2, 5, 3),
-    listOf(5, -2, 3),
-    listOf(2, 0, 2),
-    listOf(-6, 0, -6),
-    listOf(0, 0, 0),
-    listOf(8, 1, 9),
-    listOf(3, 5, 8),
-    listOf(3, -6, -3),
-)
-
-private fun featureExtract(path: String): Array<FloatArray> {
-    val source = when (path) {
-        "train" -> train
-        else -> test
-    }
-    return source.map { row ->
-        FloatArray(row.size - 1) { idx -> row[idx].toFloat() }
-    }.toTypedArray()
-}
-
-private fun labelExtract(path: String): FloatArray {
-    val source = when (path) {
-        "train" -> train
-        else -> test
-    }
-
-    return FloatArray(source.size) { idx -> source[idx][2].toFloat() }
-}
-
 fun main() {
 
     val (trainSet, testSet) = OnHeapDataset.createTrainAndTestDatasets(
-        trainFeaturesPath = "train",
-        trainLabelsPath = "train",
-        testFeaturesPath = "test",
-        testLabelsPath = "test",
-        numClasses = 10,
-        featuresExtractor = { x -> featureExtract(x) },
-        labelExtractor = { x, _ -> labelExtract(x) }
+        trainFeaturesPath = "data/generated_end_states.csv",
+        trainLabelsPath = "data/generated_end_states.csv",
+        testFeaturesPath = "data/generated_end_states.csv",
+        testLabelsPath = "data/generated_end_states.csv",
+        numClasses = 0,
+        featuresExtractor = { extractFeaturesFromCsv(it) },
+        labelExtractor = { path, y -> extractLabelsFromCsv(path, y) }
     )
 
     Sequential.of(
-        Input(2),
+        Input(206),
+        Dense(100),
+        Dense(50),
         Dense(1)
     ).use {
         it.compile(
@@ -79,7 +36,8 @@ fun main() {
         it.printSummary()
 
         it.fit(
-            dataset = trainSet
+            dataset = trainSet,
+            epochs = 100
         )
 
         val accuracy = it.evaluate(
