@@ -18,7 +18,7 @@ fun main() {
         testLabelsPath = "data/test.csv",
         numClasses = 0,
         featuresExtractor = { extractFeaturesFromCsv(it) },
-        labelExtractor = { path, y -> extractLabelsFromCsv(path, y) }
+        labelExtractor = { path, _ -> extractLabelsFromCsv(path) }
     )
 
     Sequential.of(
@@ -37,7 +37,8 @@ fun main() {
 
         it.fit(
             dataset = trainSet,
-            epochs = 20
+            epochs = 20,
+            batchSize = 10
         )
 
         val accuracy = it.evaluate(

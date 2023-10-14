@@ -34,7 +34,7 @@ fun extractFeaturesFromCsv(path: String): Array<FloatArray> {
     return result.toTypedArray()
 }
 
-fun extractLabelsFromCsv(path: String, y: Int): FloatArray {
+fun extractLabelsFromCsv(path: String): FloatArray {
     val result = mutableListOf<Float>()
     reader.open(path) {
         readAllAsSequence().forEachIndexed { idx, row ->

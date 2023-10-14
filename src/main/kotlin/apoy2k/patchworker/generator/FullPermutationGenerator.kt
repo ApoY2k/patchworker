@@ -1,16 +1,12 @@
 package apoy2k.patchworker.generator
 
-import apoy2k.patchworker.game.*
-import io.github.oshai.kotlinlogging.KotlinLogging
+import apoy2k.patchworker.game.Game
 import kotlinx.coroutines.*
-import java.io.Writer
 import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
-
-private val log = KotlinLogging.logger {}
 
 val trainingFile = Path("data/training.csv")
 val testFile = Path("data/test.csv")
@@ -40,101 +36,25 @@ fun main() {
         repeat(parallelism) {
             launch(gameSimDispatcher) {
                 val output = outputPool.random()
-                runGame(output.second, Game(), 50, 0, output.first)
+                runGame(output.second, Game(), randomDepth(), 0, output.first)
             }
         }
     }
 }
 
-fun runGame(
-    scores: ConcurrentHashMap<String, Int>,
-    game: Game,
-    maxDepth: Int,
-    depth: Int,
-    writer: Writer
-) {
-    val currentPlayer = game.nextPlayer
-    if (currentPlayer != null && depth < maxDepth) {
-        spawnChildGames(scores, game, currentPlayer, maxDepth, depth, writer)
-    } else {
-        if (!scores.containsKey(game.checksum())) {
-            printDebug(depth, "Game end reached for $game")
-            val score = scorePlayer(game.player1) - scorePlayer(game.player2)
-            val lines = StringBuilder()
-                .append(game.checksum())
-                .append(",")
-                .append(score)
-                .append("\r\n")
-            writer.write(lines.toString())
-            scores[game.checksum()] = score
-        }
-    }
-    writer.flush()
-}
+val depthWeights = (1..50).associateWith { (51 - it) }
+val weightSum = depthWeights.values.sum()
 
-private fun spawnChildGames(
-    scores: ConcurrentHashMap<String, Int>,
-    game: Game,
-    player: Player,
-    maxDepth: Int,
-    depth: Int,
-    writer: Writer
-) {
-    printDebug(depth, "Deciding moves for $player in $game")
-    for (patch in game.getPatchOptions()) {
-        for ((rowIdx, fields) in player.board.withIndex()) {
-            for ((colIdx, _) in fields.withIndex()) {
-                repeat(2) { flip ->
-                    printDebug(depth, "Flip loop #$flip for $player in $game")
-                    repeat(4) { rotate ->
-                        printDebug(depth, "Rotate loop #$rotate for $player in $game")
-                        val anchor = Position(rowIdx, colIdx)
-                        val childGame = game.copy()
-                        printDebug(depth, "Creating copy of $game as $childGame to run patch place")
-                        runPlaceCopy(scores, childGame, patch, anchor, maxDepth, depth, writer)
-                        patch.rotate()
-                    }
-                    patch.rotate()
-                    patch.flip()
-                }
-            }
+private fun randomDepth(): Int {
+    val rnd = Math.random() * weightSum
+
+    var iteratorWeight = 0
+    depthWeights.forEach {
+        iteratorWeight += it.value
+        if (iteratorWeight >= rnd) {
+            return it.key
         }
     }
 
-    val childGame = game.copy()
-    printDebug(depth, "Creating copy of $game as $childGame to run advance")
-    runAdvanceCopy(scores, childGame, maxDepth, depth, writer)
-}
-
-private fun runPlaceCopy(
-    scores: ConcurrentHashMap<String, Int>,
-    game: Game,
-    patch: Patch,
-    anchor: Pair<Int, Int>,
-    maxDepth: Int,
-    depth: Int,
-    writer: Writer
-) {
-    printDebug(depth, "Placing $patch at $anchor for ${game.nextPlayer} in $game")
-    if (game.place(patch, anchor)) {
-        printDebug(depth, "Recursing into $game")
-        runGame(scores, game, maxDepth, depth + 1, writer)
-    }
-}
-
-private fun runAdvanceCopy(
-    scores: ConcurrentHashMap<String, Int>,
-    game: Game,
-    maxDepth: Int,
-    depth: Int,
-    writer: Writer
-) {
-    printDebug(depth, "Advancing ${game.nextPlayer} in $game")
-    game.advance()
-    printDebug(depth, "Recursing into $game")
-    runGame(scores, game, maxDepth, depth + 1, writer)
-}
-
-private fun printDebug(depth: Int, message: String) {
-    log.debug { "   -".repeat(depth) + "> $message" }
+    return 1
 }
