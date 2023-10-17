@@ -4,6 +4,7 @@ import apoy2k.patchworker.game.Game
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Executors
@@ -22,9 +23,10 @@ fun main() {
     runBlocking {
         repeat(parallelism) {
             launch(gameSimDispatcher) {
-                runGame(Game(), randomDepth(), 0, datasource.connection)
-            }.join()
+                runGame(Game(), randomDepth(), 0, datasource)
+            }
         }
+        joinAll()
     }
 }
 

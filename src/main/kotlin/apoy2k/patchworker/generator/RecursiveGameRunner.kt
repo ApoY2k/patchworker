@@ -2,7 +2,7 @@ package apoy2k.patchworker.generator
 
 import apoy2k.patchworker.game.*
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.sql.Connection
+import javax.sql.DataSource
 
 private val log = KotlinLogging.logger {}
 
@@ -24,32 +24,34 @@ fun runGame(
     game: Game,
     maxDepth: Int,
     depth: Int,
-    connection: Connection
+    db: DataSource
 ) {
     val currentPlayer = game.nextPlayer
     if (currentPlayer != null && depth < maxDepth) {
-        spawnChildGames(game, currentPlayer, maxDepth, depth, connection)
+        spawnChildGames(game, currentPlayer, maxDepth, depth, db)
     } else {
         debug(depth, "Game end reached for $game")
         val score = scorePlayer(game.player1) - scorePlayer(game.player2)
 
-        connection.prepareStatement(STATEMENT).use {
-            it.setString(1, game.patchesChecksum())
-            it.setInt(2, game.player1.trackerPosition)
-            it.setInt(3, game.player1.buttonMultiplier)
-            it.setInt(4, game.player1.buttons)
-            it.setInt(5, game.player1.specialPatches)
-            it.setInt(6, game.player1.actionsTaken)
-            it.setString(7, game.player1.board.checksum())
-            it.setInt(8, game.player2.trackerPosition)
-            it.setInt(9, game.player2.buttonMultiplier)
-            it.setInt(10, game.player2.buttons)
-            it.setInt(11, game.player2.specialPatches)
-            it.setInt(12, game.player2.actionsTaken)
-            it.setString(13, game.player2.board.checksum())
-            it.setBoolean(14, game.isPlayer1Turn())
-            it.setInt(15, score)
-            it.executeUpdate()
+        db.connection.use { connection ->
+            connection.prepareStatement(STATEMENT).use { statement ->
+                statement.setString(1, game.patchesChecksum())
+                statement.setInt(2, game.player1.trackerPosition)
+                statement.setInt(3, game.player1.buttonMultiplier)
+                statement.setInt(4, game.player1.buttons)
+                statement.setInt(5, game.player1.specialPatches)
+                statement.setInt(6, game.player1.actionsTaken)
+                statement.setString(7, game.player1.board.checksum())
+                statement.setInt(8, game.player2.trackerPosition)
+                statement.setInt(9, game.player2.buttonMultiplier)
+                statement.setInt(10, game.player2.buttons)
+                statement.setInt(11, game.player2.specialPatches)
+                statement.setInt(12, game.player2.actionsTaken)
+                statement.setString(13, game.player2.board.checksum())
+                statement.setBoolean(14, game.isPlayer1Turn())
+                statement.setInt(15, score)
+                statement.executeUpdate()
+            }
         }
     }
 }
@@ -59,7 +61,7 @@ private fun spawnChildGames(
     player: Player,
     maxDepth: Int,
     depth: Int,
-    connection: Connection
+    db: DataSource
 ) {
     debug(depth, "Deciding moves for $player in $game")
     for (patch in game.getPatchOptions()) {
@@ -72,7 +74,7 @@ private fun spawnChildGames(
                         val anchor = Position(rowIdx, colIdx)
                         val childGame = game.copy()
                         debug(depth, "Creating copy of $game as $childGame to run patch place")
-                        runPlaceCopy(childGame, patch, anchor, maxDepth, depth, connection)
+                        runPlaceCopy(childGame, patch, anchor, maxDepth, depth, db)
                         patch.rotate()
                     }
                     patch.rotate()
@@ -84,7 +86,7 @@ private fun spawnChildGames(
 
     val childGame = game.copy()
     debug(depth, "Creating copy of $game as $childGame to run advance")
-    runAdvanceCopy(childGame, maxDepth, depth, connection)
+    runAdvanceCopy(childGame, maxDepth, depth, db)
 }
 
 private fun runPlaceCopy(
@@ -93,12 +95,12 @@ private fun runPlaceCopy(
     anchor: Pair<Int, Int>,
     maxDepth: Int,
     depth: Int,
-    connection: Connection
+    db: DataSource
 ) {
     debug(depth, "Placing $patch at $anchor for ${game.nextPlayer} in $game")
     if (game.place(patch, anchor)) {
         debug(depth, "Recursing into $game")
-        runGame(game, maxDepth, depth + 1, connection)
+        runGame(game, maxDepth, depth + 1, db)
     }
 }
 
@@ -106,12 +108,12 @@ private fun runAdvanceCopy(
     game: Game,
     maxDepth: Int,
     depth: Int,
-    connection: Connection
+    db: DataSource
 ) {
     debug(depth, "Advancing ${game.nextPlayer} in $game")
     game.advance()
     debug(depth, "Recursing into $game")
-    runGame(game, maxDepth, depth + 1, connection)
+    runGame(game, maxDepth, depth + 1, db)
 }
 
 private fun debug(depth: Int, message: String) {
