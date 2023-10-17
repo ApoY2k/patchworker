@@ -1,23 +1,11 @@
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="GENERATOR_LOG_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>data/generator_log.txt</file>
-        <append>false</append>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level -%kvp- %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="apoy2k.patchworker.generator" level="info" additivity="false">
-        <appender-ref ref="GENERATOR_LOG_FILE"/>
-    </logger>
-
-    <root>
-        <appender-ref ref="STDOUT"/>
+    <root level="info">
+        <appender-ref ref="stdout"/>
     </root>
 </configuration>

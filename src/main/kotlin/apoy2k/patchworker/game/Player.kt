@@ -5,7 +5,7 @@ import kotlin.math.min
 class Player(
     board: Fields = createBoard(),
     trackerPosition: Int = 0,
-    private var buttonMultiplier: Int = 0,
+    buttonMultiplier: Int = 0,
     buttons: Int = 5,
     specialPatches: Int = 0,
     actionsTaken: Int = 0
@@ -23,6 +23,9 @@ class Player(
         private set
 
     var actionsTaken: Int = actionsTaken
+        private set
+
+    var buttonMultiplier: Int = buttonMultiplier
         private set
 
     fun advance(steps: Int) {

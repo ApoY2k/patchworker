@@ -72,14 +72,9 @@ class Game(
         nextPlayer?.copy()
     )
 
-    fun checksum() = StringBuilder()
-        .append(patches.checksum()).append(",")
-        .append(player1.checksum()).append(",")
-        .append(player2.checksum()).append(",")
-        .append(isPlayer1Turn())
-        .toString()
+    fun patchesChecksum() = patches.checksum()
 
-    private fun isPlayer1Turn() = nextPlayer == player1
+    fun isPlayer1Turn() = nextPlayer == player1
 
     private fun resetNextPlayer() {
         val trackSorted = listOf(player1, player2)
