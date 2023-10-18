@@ -1,28 +1,25 @@
 package apoy2k.patchworker.training
 
+import apoy2k.patchworker.datasource
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jetbrains.kotlinx.dl.api.core.Sequential
+import org.jetbrains.kotlinx.dl.api.core.WritingMode
 import org.jetbrains.kotlinx.dl.api.core.layer.core.Dense
 import org.jetbrains.kotlinx.dl.api.core.layer.core.Input
 import org.jetbrains.kotlinx.dl.api.core.loss.Losses
 import org.jetbrains.kotlinx.dl.api.core.metric.Metrics
 import org.jetbrains.kotlinx.dl.api.core.optimizer.Adam
 import org.jetbrains.kotlinx.dl.api.summary.printSummary
-import org.jetbrains.kotlinx.dl.dataset.OnHeapDataset
+import java.io.File
+
+private val log = KotlinLogging.logger {}
 
 fun main() {
 
-    val (trainSet, testSet) = OnHeapDataset.createTrainAndTestDatasets(
-        trainFeaturesPath = "data/training.csv",
-        trainLabelsPath = "data/training.csv",
-        testFeaturesPath = "data/test.csv",
-        testLabelsPath = "data/test.csv",
-        numClasses = 0,
-        featuresExtractor = { extractFeaturesFromCsv(it) },
-        labelExtractor = { path, _ -> extractLabelsFromCsv(path) }
-    )
+    val (trainSet, testSet) = generateDatasets(datasource)
 
     Sequential.of(
-        Input(206),
+        Input(208),
         Dense(100),
         Dense(50),
         Dense(1)
@@ -35,10 +32,12 @@ fun main() {
 
         it.printSummary()
 
+        log.info { "Starting training" }
+
         it.fit(
             dataset = trainSet,
-            epochs = 20,
-            batchSize = 10
+            epochs = 5,
+            batchSize = 10_000
         )
 
         val accuracy = it.evaluate(
@@ -46,10 +45,11 @@ fun main() {
         )
             .metrics[Metrics.MAE]
 
-        println("Accuracy: $accuracy")
+        log.info { "Accuracy: $accuracy" }
 
-        val pred = it.predictSoftly(listOf(1f, 2f).toFloatArray())
+        val file = File("model/0.1.0")
+        it.save(file, writingMode = WritingMode.OVERRIDE)
 
-        println("Prediction for (1, 2): ${pred.toList()}")
+        log.info { "Saved model in $file" }
     }
 }

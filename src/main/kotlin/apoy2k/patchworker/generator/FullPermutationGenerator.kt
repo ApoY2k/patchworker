@@ -1,8 +1,7 @@
 package apoy2k.patchworker.generator
 
+import apoy2k.patchworker.datasource
 import apoy2k.patchworker.game.Game
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -10,12 +9,6 @@ import kotlinx.coroutines.runBlocking
 import java.util.concurrent.Executors
 
 val parallelism = Runtime.getRuntime().availableProcessors()
-
-val datasource = HikariDataSource(HikariConfig().also {
-    it.jdbcUrl = System.getenv("JDBC_URL")
-    it.username = "postgres"
-    it.password = "postgres"
-})
 
 val gameSimDispatcher = Executors.newFixedThreadPool(parallelism).asCoroutineDispatcher()
 
