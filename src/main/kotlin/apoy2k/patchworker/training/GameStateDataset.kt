@@ -1,20 +1,20 @@
 package apoy2k.patchworker.training
 
+import apoy2k.patchworker.datasource
 import org.jetbrains.kotlinx.dl.dataset.DataBatch
 import org.jetbrains.kotlinx.dl.dataset.Dataset
 import java.math.BigInteger
-import javax.sql.DataSource
 
 class GameStateDataset(
-    private val db: DataSource,
-    private val filterQuery: String
+    private val table: String,
+    private val filterQuery: String,
 ) : Dataset() {
 
     override fun createDataBatch(batchStart: Int, batchLength: Int): DataBatch {
-        val query = "select * from data where $filterQuery order by id limit $batchLength offset $batchStart"
+        val query = "select * from $table where $filterQuery order by id limit $batchLength offset $batchStart"
         val features = mutableListOf<FloatArray>()
         val labels = mutableListOf<Float>()
-        db.connection.use { connection ->
+        datasource.connection.use { connection ->
             connection.prepareStatement(query).use { statement ->
                 statement.executeQuery().use {
                     while (it.next()) {
@@ -65,8 +65,8 @@ class GameStateDataset(
     }
 
     override fun xSize(): Int {
-        val query = "select count(1) from data where $filterQuery"
-        return db.connection.use { connection ->
+        val query = "select count(1) from $table where $filterQuery"
+        return datasource.connection.use { connection ->
             connection.prepareStatement(query).use { statement ->
                 statement.executeQuery().use {
                     it.next()
@@ -88,5 +88,5 @@ private fun String.decodeBinaryChecksum(length: Int) =
             }.toFloat()
         }
 
-fun generateDatasets(db: DataSource) =
-    Pair(GameStateDataset(db, " mod(id, 2) = 0 "), GameStateDataset(db, " mod(id, 2) <> 0 "))
+fun generateDatasets(table: String) =
+    Pair(GameStateDataset(table, " mod(id, 2) = 0 "), GameStateDataset(table, " mod(id, 2) <> 0 "))
