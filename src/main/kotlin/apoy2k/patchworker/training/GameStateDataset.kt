@@ -77,7 +77,7 @@ class GameStateDataset(
     }
 }
 
-private fun String.decodeBinaryChecksum(length: Int) =
+fun String.decodeBinaryChecksum(length: Int) =
     BigInteger(this)
         .toString(2)
         .padStart(length, '0')

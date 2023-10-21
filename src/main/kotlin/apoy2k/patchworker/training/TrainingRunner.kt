@@ -12,10 +12,13 @@ import org.jetbrains.kotlinx.dl.api.summary.printSummary
 import java.io.File
 
 private val log = KotlinLogging.logger {}
-private const val table = "data_depth_1"
 
 fun main() {
+    trainModel("data_depth_1")
+//    trainModel("data_depth_2")
+}
 
+private fun trainModel(table: String) {
     val (trainSet, testSet) = generateDatasets(table)
 
     Sequential.of(
@@ -26,7 +29,7 @@ fun main() {
     ).use {
         it.compile(
             optimizer = Adam(),
-            loss = Losses.MAE,
+            loss = Losses.MSE,
             metric = Metrics.MAE
         )
 
@@ -36,11 +39,11 @@ fun main() {
 
         it.fit(
             dataset = trainSet,
-            epochs = 50,
-            batchSize = 10_000
+            epochs = 10,
+            batchSize = 1_000
         )
 
-        log.info { "Finished training, stratgin evaluation" }
+        log.info { "Finished training, starting evaluation" }
 
         val accuracy = it.evaluate(
             dataset = testSet
