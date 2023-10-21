@@ -40,7 +40,7 @@ class GameStateDataset(
                         )
 
                         features.add(rowData.toFloatArray())
-                        labels.add(it.getInt(16).toFloat())
+                        labels.add(it.getFloat(16))
                     }
                 }
             }

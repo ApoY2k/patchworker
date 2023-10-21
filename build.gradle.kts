@@ -22,7 +22,7 @@ dependencies {
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2") // for JVM platform
     implementation("com.zaxxer:HikariCP:5.0.1")
 
-    runtimeOnly("org.postgresql:postgresql:42.5.4")
+    implementation("org.postgresql:postgresql:42.5.4")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.10")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
