@@ -13,14 +13,10 @@ import java.io.File
 
 private val log = KotlinLogging.logger {}
 
-fun main() {
-    trainModel("data_depth_1")
-//    trainModel("data_depth_2")
-}
+fun main(vararg args: String) {
+    val table = "data_depth_${args[0]}"
 
-private fun trainModel(table: String) {
     val (trainSet, testSet) = generateDatasets(table)
-
     Sequential.of(
         Input(208),
         Dense(100),
