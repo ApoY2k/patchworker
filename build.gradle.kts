@@ -20,9 +20,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-onnx:0.5.2")
     implementation("org.jetbrains.kotlinx:kotlin-deeplearning-visualization:0.5.2")
 
-    implementation("org.tensorflow:libtensorflow:1.15.0")
-    implementation("org.tensorflow:libtensorflow_jni_gpu:1.15.0")
-
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2") // for JVM platform
     implementation("com.zaxxer:HikariCP:5.0.1")
 

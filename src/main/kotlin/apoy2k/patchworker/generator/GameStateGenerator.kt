@@ -18,9 +18,8 @@ class GameStateGenerator(
             val options = createMoveOptionGameCopies(game, currentPlayer)
 
             val score = options
-                .sumOf { scorer.score(it) }
+                .maxOf { scorer.score(it) }
                 .toFloat()
-                .div(options.size)
 
             try {
                 saveGame(game, score, table)

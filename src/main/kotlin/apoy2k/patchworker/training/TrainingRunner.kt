@@ -30,23 +30,23 @@ private fun trainModel(table: String) {
         it.compile(
             optimizer = Adam(),
             loss = Losses.MSE,
-            metric = Metrics.MAE
+            metric = Metrics.MAE,
         )
 
         it.printSummary()
 
-        log.info { "Starting training" }
+        val callback = ModelCallback(trainSet, testSet)
 
         it.fit(
             dataset = trainSet,
             epochs = 10,
-            batchSize = 1_000
+            batchSize = 1_000,
+            callbacks = listOf(callback)
         )
 
-        log.info { "Finished training, starting evaluation" }
-
         val accuracy = it.evaluate(
-            dataset = testSet
+            dataset = testSet,
+            callbacks = listOf(callback)
         )
             .metrics[Metrics.MAE]
 
