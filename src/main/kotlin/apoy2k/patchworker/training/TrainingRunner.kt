@@ -18,8 +18,8 @@ fun main(vararg args: String) {
 
     val (trainSet, testSet) = generateDatasets(table)
     Sequential.of(
-        Input(208),
-        Dense(100),
+        Input(1262),
+        Dense(500),
         Dense(50),
         Dense(1)
     ).use {

@@ -14,34 +14,41 @@ val datasource = HikariDataSource(HikariConfig().also {
 const val INSERT_DATA_STATEMENT = """
     insert into %s
      (
-        patches,
-        p1_tracker_position, p1_button_multiplier, p1_buttons, p1_special_patches, p1_actions_taken, p1_board,
-        p2_tracker_position, p2_button_multiplier, p2_buttons, p2_special_patches, p2_actions_taken, p2_board,
-        is_p1_turn,
-        score
+        hash, parenthash, patches,
+        p1_tp, p1_bm, p1_bs, p1_sp, p1_at, p1_bd,
+        p2_tp, p2_bm, p2_bs, p2_sp, p2_at, p2_bd,
+        p1_tn, score
      )
-     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     values
+     (
+        ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?
+     )
 """
 
 fun saveGame(game: Game, score: Float, table: String) {
     datasource.connection.use { connection ->
         val query = INSERT_DATA_STATEMENT.format(table)
         connection.prepareStatement(query).use { statement ->
-            statement.setString(1, game.patchesChecksum())
-            statement.setInt(2, game.player1.trackerPosition)
-            statement.setInt(3, game.player1.buttonMultiplier)
-            statement.setInt(4, game.player1.buttons)
-            statement.setInt(5, game.player1.specialPatches)
-            statement.setInt(6, game.player1.actionsTaken)
-            statement.setString(7, game.player1.board.checksum())
-            statement.setInt(8, game.player2.trackerPosition)
-            statement.setInt(9, game.player2.buttonMultiplier)
-            statement.setInt(10, game.player2.buttons)
-            statement.setInt(11, game.player2.specialPatches)
-            statement.setInt(12, game.player2.actionsTaken)
-            statement.setString(13, game.player2.board.checksum())
-            statement.setBoolean(14, game.isPlayer1Turn())
-            statement.setFloat(15, score)
+            statement.setInt(1, game.hashCode())
+            statement.setInt(2, game.parentHash)
+            statement.setString(3, game.patchesList())
+            statement.setInt(4, game.player1.trackerPosition)
+            statement.setInt(5, game.player1.buttonMultiplier)
+            statement.setInt(6, game.player1.buttons)
+            statement.setInt(7, game.player1.specialPatches)
+            statement.setInt(8, game.player1.actionsTaken)
+            statement.setString(9, game.player1.board.checksum())
+            statement.setInt(10, game.player2.trackerPosition)
+            statement.setInt(11, game.player2.buttonMultiplier)
+            statement.setInt(12, game.player2.buttons)
+            statement.setInt(13, game.player2.specialPatches)
+            statement.setInt(14, game.player2.actionsTaken)
+            statement.setString(15, game.player2.board.checksum())
+            statement.setBoolean(16, game.isPlayer1Turn())
+            statement.setFloat(17, score)
             statement.executeUpdate()
         }
     }

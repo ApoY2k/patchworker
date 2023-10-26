@@ -5,6 +5,7 @@ import java.util.*
 class NoActivePlayerException : Exception()
 
 class Game(
+    val parentHash: Int,
     private val patches: MutableList<Patch> = generatePatches(),
     val player1: Player = Player(),
     val player2: Player = Player(),
@@ -66,13 +67,14 @@ class Game(
     }
 
     fun copy() = Game(
+        this.hashCode(),
         patches.map { it.copy() }.toMutableList(),
         player1.copy(),
         player2.copy(),
         nextPlayer?.copy()
     )
 
-    fun patchesChecksum() = patches.checksum()
+    fun patchesList() = patches.joinToString(",") { it.id }
 
     fun isPlayer1Turn() = nextPlayer == player1
 

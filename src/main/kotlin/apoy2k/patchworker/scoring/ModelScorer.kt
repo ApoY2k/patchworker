@@ -20,7 +20,7 @@ class ModelScorer(
     private fun Game.toModelInput(): FloatArray {
         val input = mutableListOf<Float>()
 
-        input.addAll(this.patchesChecksum().decodeBinaryChecksum(35))
+        input.addAll(this.patchesList().decodeBinaryChecksum(35))
         input.add(this.player1.trackerPosition.toFloat())
         input.add(this.player1.buttonMultiplier.toFloat())
         input.add(this.player1.buttons.toFloat())

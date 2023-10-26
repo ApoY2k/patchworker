@@ -34,7 +34,7 @@ private fun generate(table: String, scorer: GameStateScorer) {
     runBlocking {
         repeat(parallelism) {
             launch(gameSimDispatcher) {
-                generator.generate(Game())
+                generator.generate(Game(0))
             }
         }
         joinAll()

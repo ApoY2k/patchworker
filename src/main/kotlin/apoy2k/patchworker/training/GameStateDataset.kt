@@ -1,6 +1,7 @@
 package apoy2k.patchworker.training
 
 import apoy2k.patchworker.datasource
+import apoy2k.patchworker.game.asPatchIdOneHotEncodedFloatList
 import org.jetbrains.kotlinx.dl.dataset.DataBatch
 import org.jetbrains.kotlinx.dl.dataset.Dataset
 import java.math.BigInteger
@@ -16,31 +17,43 @@ class GameStateDataset(
         val labels = mutableListOf<Float>()
         datasource.connection.use { connection ->
             connection.prepareStatement(query).use { statement ->
-                statement.executeQuery().use {
-                    while (it.next()) {
+                statement.executeQuery().use { stmt ->
+                    while (stmt.next()) {
                         val rowData = mutableListOf<Float>()
-                        rowData.addAll(it.getString(2).decodeBinaryChecksum(35))
-                        rowData.add(it.getFloat(3))
-                        rowData.add(it.getFloat(4))
-                        rowData.add(it.getFloat(5))
-                        rowData.add(it.getFloat(6))
-                        rowData.add(it.getFloat(7))
-                        rowData.addAll(it.getString(8).decodeBinaryChecksum(81))
-                        rowData.add(it.getFloat(9))
-                        rowData.add(it.getFloat(10))
-                        rowData.add(it.getFloat(11))
-                        rowData.add(it.getFloat(12))
-                        rowData.add(it.getFloat(13))
-                        rowData.addAll(it.getString(14).decodeBinaryChecksum(81))
+                        val patches = stmt.getString(4)
+                            .split(",")
+                            .flatMap { it.asPatchIdOneHotEncodedFloatList() }
+                            .toMutableList()
+
+                        // Pad out zeroed inputs for missing patches
+                        while (patches.size < 1089) {
+                            repeat(33) {
+                                patches.add(0f)
+                            }
+                        }
+
+                        rowData.addAll(patches)
+                        rowData.add(stmt.getFloat(5))
+                        rowData.add(stmt.getFloat(6))
+                        rowData.add(stmt.getFloat(7))
+                        rowData.add(stmt.getFloat(8))
+                        rowData.add(stmt.getFloat(9))
+                        rowData.addAll(stmt.getString(10).decodeBinaryChecksum(81))
+                        rowData.add(stmt.getFloat(11))
+                        rowData.add(stmt.getFloat(12))
+                        rowData.add(stmt.getFloat(13))
+                        rowData.add(stmt.getFloat(14))
+                        rowData.add(stmt.getFloat(15))
+                        rowData.addAll(stmt.getString(16).decodeBinaryChecksum(81))
                         rowData.add(
-                            when (it.getBoolean(15)) {
+                            when (stmt.getBoolean(17)) {
                                 true -> 1
                                 else -> 0
                             }.toFloat()
                         )
 
                         features.add(rowData.toFloatArray())
-                        labels.add(it.getFloat(16))
+                        labels.add(stmt.getFloat(18))
                     }
                 }
             }
